@@ -1,1 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Babypeacock Race</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:#050010;
+      color:#fff;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      min-height:100vh;
+    }
+    .wrap{width:100%;max-width:1200px;padding:16px;}
+    .top{
+      display:flex;justify-content:space-between;align-items:center;
+      gap:8px;flex-wrap:wrap;margin-bottom:8px;
+    }
+    .logo{display:flex;align-items:center;gap:6px;font-weight:800;font-size:20px;}
+    .logo span{font-size:22px;}
+    .tag{font-size:11px;opacity:.9;}
+    .pill{
+      padding:5px 10px;border-radius:999px;font-size:9px;
+      background:rgba(0,0,0,.6);display:flex;flex-direction:column;gap:2px;
+    }
+    .pill strong{color:#ffd44a;font-size:10px;}
+    .bar{
+      margin-top:4px;padding:6px 10px;border-radius:12px;
+      background:linear-gradient(to right,rgba(0,0,0,.9),rgba(120,40,200,.9));
+      display:flex;justify-content:space-between;align-items:center;
+      gap:8px;flex-wrap:wrap;font-size:10px;
+    }
+    .label{font-weight:700;color:#ffdd73;margin-right:4px;}
+    .btns{display:flex;gap:6px;flex-wrap:wrap;}
+    button{
+      border:none;cursor:pointer;padding:6px 14px;border-radius:999px;
+      font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      background:#ff4e4e;color:#fff;
+      box-shadow:0 3px 10px rgba(0,0,0,.4);
+      transition:all .12s;
+    }
+    button:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(0,0,0,.6);background:#ff6b6b;}
+    button.sec{background:rgba(255,255,255,.07);color:#ffdede;box-shadow:none;}
+    button.sec:hover{background:rgba(255,255,255,.16);}
+    .track{
+      position:relative;margin-top:12px;height:260px;
+      border-radius:18px;overflow:hidden;
+      box-shadow:0 10px 24px rgba(0,0,0,.85);background:#0a0215;
+    }
+    .sky{
+      position:absolute;inset:0;z-index:0;
+      background:
+        radial-gradient(circle at 15% 0,rgba(255,255,255,.18) 0,transparent 40%),
+        radial-gradient(circle at 80% -10%,rgba(255,0,255,.25)0,transparent 55%),
+        radial-gradient(circle at 40% -5%,rgba(130,90,255,.32)0,transparent 55%),
+        linear-gradient(to bottom,#2b0a66 0%,#5e26aa 40%,#c45a6a 65%,#ff7a35 80%);
+      animation:sky 5s ease-in-out infinite alternate;
+    }
+    @keyframes sky{0%{filter:brightness(1);}100%{filter:brightness(1.12) saturate(1.1);}}
+    .mount{
+      position:absolute;left:-40px;right:-40px;bottom:34%;height:40px;z-index:1;
+      background:
+        radial-gradient(circle at 5% 100%,rgba(100,40,80,.9)0,transparent70%),
+        radial-gradient(circle at35%100%,rgba(160,60,80,.95)0,transparent70%),
+        radial-gradient(circle at75%100%,rgba(150,50,70,.92)0,transparent70%);
+    }
+    .ground{
+      position:absolute;left:-40px;right:-40px;bottom:0;height:40%;
+      background:
+        repeating-linear-gradient(to right,
+          rgba(255,255,255,.55),rgba(255,255,255,.55)18px,
+          transparent18px,transparent36px),
+        linear-gradient(to top,#ff7a35,#f2642c);
+      background-size:180px 3px,100% 100%;
+      background-position-y:26px,0;
+      animation:trackMove 1s linear infinite;
+      z-index:2;
+    }
+    @keyframes trackMove{from{background-position-x:0,0;}to{background-position-x:-180px,0;}}
+    .ground.stop{animation-play-state:paused;}
+    .lane{
+      position:absolute;left:7%;right:5%;height:30px;
+      border-bottom:2px solid rgba(255,255,255,.3);
+      z-index:3;
+    }
+    .flag{
+      position:absolute;top:18px;right:5%;width:14px;height:70%;
+      background-image:linear-gradient(to bottom,#fff 0,#fff 6px,#000 6px,#000 12px);
+      background-size:14px 12px;background-repeat:repeat-y;
+      border-radius:8px;box-shadow:0 0 6px rgba(0,0,0,.9);z-index:4;
+    }
+    .banner{
+      position:absolute;top:8px;left:50%;transform:translateX(-50%);
+      padding:4px 12px;border-radius:999px;font-size:10px;
+      background:rgba(0,0,0,.85);
+      box-shadow:0 4px 10px rgba(0,0,0,.8);
+      display:none;white-space:nowrap;z-index:6;
+    }
+    .banner.ok{
+      background:linear-gradient(to right,#ffce3a,#ff4e4e);
+      color:#1b0209;font-weight:800;
+    }
+    .runner{
+      position:absolute;display:flex;align-items:flex-end;gap:4px;
+      z-index:5;transform-origin:center bottom;
+    }
+    .runner img{
+      height:46px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.8));
+    }
+    .name{
+      font-size:8px;padding:2px 5px;border-radius:10px;
+      background:rgba(0,0,0,.7);
+    }
+    .runner.peacock .name{
+      background:#23c483;color:#02110c;font-weight:700;
+    }
+    @keyframes run{
+      0%{transform:translateY(0);}
+      25%{transform:translateY(-2px);}
+      50%{transform:translateY(0);}
+      75%{transform:translateY(-1px);}
+      100%{transform:translateY(0);}
+    }
+    .runner.go{animation:run .18s linear infinite;}
+    @media(max-width:600px){
+      .track{height:220px;}
+      .runner img{height:40px;}
+      .lane{height:26px;}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="logo"><span>🦚</span>Babypeacock Race</div>
+      <div class="tag">Everyone runs — we win.</div>
+    </div>
+    <div class="pill">
+      <span>Feather: <strong>#feathers 🪶</strong></span>
+      <span>Babypeacock stays on top.</span>
+    </div>
+  </div>
 
+  <div class="bar">
+    <div><span class="label">Final Sprint!</span><span id="status">Press Start Race.</span></div>
+    <div class="btns">
+      <button id="start">Start Race</button>
+      <button id="reset" class="sec">Reset</button>
+    </div>
+  </div>
+
+  <div class="track" id="track">
+    <div class="sky"></div>
+    <div class="mount"></div>
+    <div class="ground" id="ground"></div>
+    <div class="flag"></div>
+    <div class="banner" id="banner"></div>
+
+    <!-- lanes -->
+    <div class="lane" style="bottom:210px;"></div>
+    <div class="lane" style="bottom:176px;"></div>
+    <div class="lane" style="bottom:142px;"></div>
+    <div class="lane" style="bottom:108px;"></div>
+    <div class="lane" style="bottom:74px;"></div>
+    <div class="lane" style="bottom:40px;"></div>
+  </div>
+</div>
+
+<script>
+const track = document.getElementById("track");
+const ground = document.getElementById("ground");
+const statusEl = document.getElementById("status");
+const startBtn = document.getElementById("start");
+const resetBtn = document.getElementById("reset");
+const banner = document.getElementById("banner");
+
+const data = [
+  {id:"peacock",name:"Babypeacock",img:"Peacock.png",lane:5,scale:1.0},
+  {id:"ostrich",name:"Ostrich",img:"Ostrich.png",lane:4,scale:0.95},
+  {id:"doge",name:"Doge",img:"Doge.png",lane:3,scale:0.9},
+  {id:"cat",name:"Cat",img:"Cat.png",lane:2,scale:0.86},
+  {id:"pig",name:"Pig",img:"Pig.png",lane:1,scale:0.83},
+  {id:"raccoon",name:"Raccoon",img:"Raccoon.png",lane:0,scale:0.8}
+];
+
+let racers = [];
+let started = false;
+let finished = false;
+let animId = null;
+
+function setup(){
+  racers.forEach(r=>r.el.remove());
+  racers = [];
+  const lanes = [...track.getElementsByClassName("lane")];
+  const startX = track.clientWidth*0.06;
+  data.forEach(d=>{
+    const lane = lanes[d.lane];
+    const el = document.createElement("div");
+    el.className="runner"+(d.id==="peacock"?" peacock":"");
+    const img=document.createElement("img");
+    img.src=d.img; img.alt=d.name;
+    img.style.transform=`scale(${d.scale})`;
+    const name=document.createElement("div");
+    name.className="name";
+    name.textContent=d.name;
+    el.appendChild(img);el.appendChild(name);
+    el.style.left=startX+"px";
+    el.style.bottom=(parseFloat(lane.style.bottom)-6)+"px";
+    track.appendChild(el);
+    racers.push({id:d.id,name:d.name,el,x:startX,speed:0});
+  });
+  banner.style.display="none";
+  banner.classList.remove("ok");
+  statusEl.textContent="Press Start Race.";
+  ground.classList.remove("stop");
+  started=false;finished=false;
+}
+setup();
+
+function startRace(){
+  if(started) return;
+  started=true;finished=false;
+  statusEl.textContent="Everyone runs...";
+  racers.forEach(r=>{
+    let base=1.1+Math.random()*0.6;
+    if(r.id==="peacock") base+=0.22;
+    r.speed=base;
+    r.el.classList.add("go");
+  });
+  const finishX=track.clientWidth*0.88;
+  function step(){
+    if(finished) return;
+    let win=null;
+    racers.forEach(r=>{
+      if(finished) return;
+      const j=(Math.random()-0.5)*0.25;
+      r.x+=r.speed+j;
+      if(r.x>=finishX){
+        r.x=finishX;
+        finished=true;
+        win=r;
+      }
+      r.el.style.transform=`translateX(${r.x-track.clientWidth*0.06}px)`;
+    });
+    if(win) showResult(win);
+    else animId=requestAnimationFrame(step);
+  }
+  animId=requestAnimationFrame(step);
+}
+
+function showResult(w){
+  racers.forEach(r=>r.el.classList.remove("go"));
+  ground.classList.add("stop");
+  const peacockWin=w.id==="peacock";
+  if(peacockWin){
+    banner.textContent="🦚 Everyone runs — Babypeacock wins.";
+    banner.classList.add("ok");
+    statusEl.textContent="Babypeacock stays on top.";
+  }else{
+    banner.textContent=`🏁 ${w.name} first... but Babypeacock owns the story.`;
+    statusEl.textContent=`Winner: ${w.name}. Run again.`;
+  }
+  banner.style.display="block";
+}
+
+startBtn.onclick=startRace;
+resetBtn.onclick=()=>{cancelAnimationFrame(animId);setup();};
+
+window.onresize=()=>{if(!started)setup();}
+</script>
+</body>
+</html>
