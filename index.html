@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doge Space Tetris – Babypeacock Race</title>
+  <title>Doge Match – Space Run</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
-      background:#02010a;
+      background:#04010b;
       color:#fff;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       min-height:100vh;
@@ -18,184 +18,175 @@
     }
     .wrap{
       width:100%;
-      max-width:1000px;
+      max-width:480px;
       display:flex;
       flex-direction:column;
       gap:10px;
       align-items:center;
     }
 
-    /* HEADER */
+    /* ÜST BAŞLIK */
     .title{
       text-align:center;
       display:flex;
       flex-direction:column;
-      gap:2px;
+      gap:4px;
     }
     .title h1{
-      font-size:22px;
+      font-size:20px;
       font-weight:800;
-      letter-spacing:.05em;
+      letter-spacing:.04em;
     }
     .title span{
       font-size:10px;
       opacity:.9;
     }
     .badge{
-      margin-top:3px;
-      padding:4px 10px;
+      margin-top:2px;
+      padding:3px 9px;
       border-radius:999px;
       background:rgba(0,0,0,.7);
       font-size:9px;
       display:inline-flex;
-      gap:6px;
+      gap:5px;
       align-items:center;
     }
     .badge strong{color:#ffce3a;}
 
     /* DOGE RACE BAR */
-    .raceBar-wrap{
+    .race-wrap{
       width:100%;
       margin-top:4px;
     }
-    .raceLabel{
+    .race-label{
       font-size:9px;
-      margin-bottom:3px;
       display:flex;
       justify-content:space-between;
       gap:6px;
+      margin-bottom:3px;
     }
-    .raceLabel span strong{color:#ffce3a;}
-    .raceBar{
+    .race-label span strong{color:#ffce3a;}
+    .race-bar{
       position:relative;
       width:100%;
-      height:42px;
+      height:40px;
       border-radius:20px;
-      padding:4px 10px;
+      padding:4px 8px;
       background:
-        radial-gradient(circle at 5% 0,rgba(255,255,255,.1),transparent 55%),
-        linear-gradient(to right,#2d0044,#4b178b,#ff4e4e);
-      box-shadow:0 8px 18px rgba(0,0,0,.9);
+        radial-gradient(circle at 0 0,rgba(255,255,255,.12),transparent 55%),
+        linear-gradient(to right,#2a0044,#4b178b,#ff4e4e);
+      box-shadow:0 6px 16px rgba(0,0,0,.9);
       overflow:hidden;
     }
-    .finishLabel{
+    .finish-tag{
       position:absolute;
       right:6px;
       top:6px;
-      font-size:9px;
       padding:2px 6px;
       border-radius:10px;
+      font-size:8px;
       background:rgba(0,0,0,.85);
       border:1px solid #ffce3a;
       color:#ffce3a;
     }
-    .dogeMarker{
+    .doge-marker{
       position:absolute;
-      left:8px;
+      left:6px;
       bottom:4px;
-      width:44px;
+      width:40px;
       height:32px;
       display:flex;
-      align-items:center;
+      align-items:flex-end;
       justify-content:center;
-      border-radius:12px;
-      background:rgba(0,0,0,.85);
-      box-shadow:0 0 10px rgba(0,0,0,.9);
-      transition:transform .25s ease-out;
+      /* siyah kutu yok, tamamen şeffaf */
+      background:transparent;
+      box-shadow:none;
+      transition:transform .2s ease-out;
     }
-    .dogeMarker video{
-      height:28px;
+    .doge-marker img,
+    .doge-marker video{
+      height:30px;
       border-radius:8px;
+      background:transparent;
+      display:block;
     }
 
-    /* MAIN AREA */
-    .main{
-      display:flex;
-      gap:14px;
-      margin-top:8px;
-      align-items:flex-start;
-      width:100%;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-
-    /* TETRIS BOARD */
-    .boardWrap{
-      padding:8px;
-      border-radius:14px;
-      background:radial-gradient(circle at 0 0,rgba(255,255,255,.09),transparent 60%);
+    /* MATCH-3 TAHTA */
+    .board-wrap{
+      margin-top:6px;
+      padding:6px;
+      border-radius:16px;
+      background:radial-gradient(circle at 0 0,rgba(255,255,255,.06),transparent 70%);
       box-shadow:0 10px 24px rgba(0,0,0,.95);
     }
-    .boardHeader{
+    .top-row{
       display:flex;
       justify-content:space-between;
-      gap:6px;
       align-items:center;
+      gap:6px;
       font-size:9px;
       margin-bottom:4px;
     }
-    .boardHeader span strong{color:#7dffb4;}
-    #score,#lines{font-weight:700;color:#ffce3a;}
-    #targetLines{color:#ff9f5a;font-weight:600;}
+    #score{color:#ffce3a;font-weight:700;}
+    #moves{color:#7dffb4;font-weight:700;}
 
-    #board{
-      width:220px;
-      height:440px;
-      background:radial-gradient(circle at 50% 0,rgba(255,255,255,.04),transparent 65%);
-      border-radius:10px;
-      padding:3px;
+    .board{
+      width:100%;
+      max-width:360px;
+      aspect-ratio:1/1;
       display:grid;
-      grid-template-columns:repeat(10,1fr);
-      grid-template-rows:repeat(20,1fr);
-      gap:1px;
+      grid-template-columns:repeat(8,1fr);
+      grid-template-rows:repeat(8,1fr);
+      gap:2px;
+      touch-action:manipulation;
     }
+
     .cell{
-      background:rgba(6,6,20,.98);
-      border-radius:3px;
+      position:relative;
+      border-radius:8px;
+      background:rgba(4,3,18,.98);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
     }
-    .cell.filled{background:#ff4e4e;}
-    .cell.active{background:#ffce3a;}
+
+    .gem{
+      width:70%;
+      height:70%;
+      border-radius:50%;
+      box-shadow:0 0 8px rgba(0,0,0,.6);
+      transform:scale(1);
+      transition:transform .08s;
+    }
+    .cell.selected .gem{
+      transform:scale(1.1);
+      box-shadow:0 0 10px rgba(255,255,255,.7);
+    }
+    .cell.pop .gem{
+      animation:pop .18s forwards;
+    }
+    @keyframes pop{
+      to{transform:scale(0);opacity:0;}
+    }
+
+    /* renkler */
+    .r{background:linear-gradient(145deg,#ff3b3b,#ff9f7b);}
+    .g{background:linear-gradient(145deg,#38ff9c,#1bbf6b);}
+    .b{background:linear-gradient(145deg,#4dd0ff,#216bff);}
+    .y{background:linear-gradient(145deg,#ffe45d,#ffb347);}
+    .p{background:linear-gradient(145deg,#ff8ef2,#c547ff);}
+    .o{background:linear-gradient(145deg,#ffa141,#ff5b2e);}
 
     .hint{
       margin-top:4px;
-      font-size:8px;
+      font-size:9px;
+      text-align:center;
       opacity:.9;
-      max-width:220px;
-      line-height:1.4;
-    }
-
-    /* SIDE TEXT */
-    .sideInfo{
-      font-size:9px;
       max-width:360px;
-      line-height:1.4;
-      opacity:.95;
     }
 
-    /* CONTROLS (MOBILE) */
-    .controls{
-      margin-top:6px;
-      display:flex;
-      gap:4px;
-      flex-wrap:wrap;
-      justify-content:center;
-      font-size:9px;
-    }
-    .btn{
-      padding:5px 10px;
-      border-radius:999px;
-      background:rgba(0,0,0,.75);
-      border:1px solid rgba(255,255,255,.12);
-      color:#ffce3a;
-      cursor:pointer;
-      user-select:none;
-    }
-    .btn:active{
-      background:#ffce3a;
-      color:#000;
-    }
-
-    /* OVERLAY MESSAGES */
+    /* OVERLAY */
     .overlay{
       position:fixed;
       left:50%;
@@ -212,399 +203,347 @@
       z-index:50;
     }
     .overlay strong{color:#ffce3a;}
+    .btn{
+      margin-top:6px;
+      padding:5px 10px;
+      border-radius:999px;
+      border:none;
+      background:#ffce3a;
+      color:#000;
+      font-size:10px;
+      font-weight:600;
+      cursor:pointer;
+    }
   </style>
 </head>
 <body>
 <div class="wrap">
   <div class="title">
-    <h1>🐕 Doge Space Tetris</h1>
-    <span>Mars/uzay pistinde Tetris oyna, satır aldıkça Doge FINISH'e yaklaşsın.</span>
+    <h1>Doge Match</h1>
+    <span>Candy tarzı uzay tahtası. 3’lü eşleştir, Doge’u finish’e taşı.</span>
     <div class="badge">
       <span>Babypeacock universe</span>
       <span>·</span>
-      <span>Everyone stacks — Doge wins.</span>
+      <strong>Mobile first</strong>
     </div>
   </div>
 
-  <!-- DOGE RACE BAR -->
-  <div class="raceBar-wrap">
-    <div class="raceLabel">
-      <span>Her <strong>dolu satır</strong> = Doge ileri adım.</span>
-      <span>İlerleme: <span id="lineProgress">0</span>/<span id="targetLines">20</span></span>
+  <!-- DOGE PROGRESS BAR -->
+  <div class="race-wrap">
+    <div class="race-label">
+      <span>3 aynı meyve → patlar, Doge ilerler.</span>
+      <span>İlerleme: <strong id="progressText">0%</strong></span>
     </div>
-    <div class="raceBar" id="trackBar">
-      <div class="dogeMarker" id="dogeMarker">
-        <video id="dogeVideo" src="Doge.mp4" autoplay loop muted playsinline></video>
+    <div class="race-bar" id="raceBar">
+      <div class="doge-marker" id="dogeMarker">
+        <!-- Doge resmi (arka plan kutusuz). Doge.png yoksa Doge.mp4 kullan -->
+        <img id="dogeImg" src="Doge.png" alt="Doge">
       </div>
-      <div class="finishLabel">FINISH</div>
+      <div class="finish-tag">FINISH</div>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
-    <!-- TETRIS -->
-    <div class="boardWrap">
-      <div class="boardHeader">
-        <span>Score: <strong id="score">0</strong></span>
-        <span>Lines: <strong id="lines">0</strong></span>
-      </div>
-      <div id="board"></div>
-      <div class="hint">
-        PC: ◀ ▶ = hareket, ▲ = döndür, ▼ = hızlandır, Space = bırak.  
-        Mobil: aşağıdaki tuşlara dokun. Satırları temizle, Doge’yi FINISH’e götür.
-      </div>
+  <!-- MATCH-3 BOARD -->
+  <div class="board-wrap">
+    <div class="top-row">
+      <div>Skor: <span id="score">0</span></div>
+      <div>Hamle: <span id="moves">∞</span></div>
     </div>
-
-    <!-- YAN YAZI -->
-    <div class="sideInfo">
-      Bu demo sade tutuyoruz:
-      <ul style="margin-left:14px;margin-top:4px;">
-        <li>Uzay/Mars temalı ışıklarla aydınlatılmış Tetris alanı.</li>
-        <li>Her temizlenen satır Doge’yi yukarıdaki pistte ileri taşır.</li>
-        <li><strong>20 satır</strong> tamamladığında Doge FINISH’e ulaşır ve koşu yarışını kazanmış sayılır.</li>
-        <li>Bu yapı daha sonra çok oyunculuya veya token/leaderboard entegrasyonuna açılır.</li>
-      </ul>
-      <p style="margin-top:4px;opacity:.85;">
-        Basit HTML+JS, sadece GitHub Pages ile çalışır; ekstra backend yok.
-      </p>
+    <div class="board" id="board"></div>
+    <div class="hint">
+      Tahtaya dokun:
+      önce bir taşı seç, sonra yanındakiyle yer değiştir.
+      Sadece <strong>yan yana</strong> taşlar değişir ve mutlaka 3’lü eşleşme olmalı.
+      Her patlamada skor + Doge ilerler. %100 olunca Doge finishe ulaşır.
     </div>
-  </div>
-
-  <!-- MOBİL KONTROLLER -->
-  <div class="controls">
-    <div class="btn" onclick="control('left')">◀</div>
-    <div class="btn" onclick="control('rotate')">⟳</div>
-    <div class="btn" onclick="control('right')">▶</div>
-    <div class="btn" onclick="control('down')">▼</div>
-    <div class="btn" onclick="control('drop')">⏬</div>
   </div>
 </div>
 
-<div class="overlay" id="overlay"></div>
+<div class="overlay" id="overlay">
+  <div id="overlayText"></div>
+  <button class="btn" onclick="restart()">Tekrar Oyna</button>
+</div>
 
 <script>
-/* ========= BASIC TETRIS LOGIC ========= */
+/* === Basit Match-3 + Doge progress === */
 
-const rows = 20, cols = 10;
+const rows = 8;
+const cols = 8;
+const types = ['r','g','b','y','p','o']; // elma vb renkler
 const boardEl = document.getElementById('board');
 const scoreEl = document.getElementById('score');
-const linesEl = document.getElementById('lines');
+const movesEl = document.getElementById('moves');
 const overlay = document.getElementById('overlay');
+const overlayText = document.getElementById('overlayText');
+const dogeMarker = document.getElementById('dogeMarker');
+const raceBar = document.getElementById('raceBar');
+const progressText = document.getElementById('progressText');
 
 let board = [];
-let current = null;
+let selected = null;
+let animating = false;
 let score = 0;
-let lines = 0;
-let dropCounter = 0;
-let dropInterval = 600;
-let lastTime = 0;
-let gameOver = false;
-let dogeProgressLines = 0;
-const targetLines = 20;
-const lineProgEl = document.getElementById('lineProgress');
-const dogeMarker = document.getElementById('dogeMarker');
-const trackBar = document.getElementById('trackBar');
+let progress = 0; // 0..1 arası
 
-lineProgEl.textContent = dogeProgressLines;
-
-const shapes = {
-  I: [
-    [[1,1,1,1]],
-    [[1],[1],[1],[1]]
-  ],
-  O: [
-    [[1,1],
-     [1,1]]
-  ],
-  T: [
-    [[0,1,0],
-     [1,1,1]],
-    [[1,0],
-     [1,1],
-     [1,0]],
-    [[1,1,1],
-     [0,1,0]],
-    [[0,1],
-     [1,1],
-     [0,1]]
-  ],
-  L: [
-    [[1,0],
-     [1,0],
-     [1,1]],
-    [[1,1,1],
-     [1,0,0]],
-    [[1,1],
-     [0,1],
-     [0,1]],
-    [[0,0,1],
-     [1,1,1]]
-  ],
-  J: [
-    [[0,1],
-     [0,1],
-     [1,1]],
-    [[1,0,0],
-     [1,1,1]],
-    [[1,1],
-     [1,0],
-     [1,0]],
-    [[1,1,1],
-     [0,0,1]]
-  ],
-  S: [
-    [[0,1,1],
-     [1,1,0]],
-    [[1,0],
-     [1,1],
-     [0,1]]
-  ],
-  Z: [
-    [[1,1,0],
-     [0,1,1]],
-    [[0,1],
-     [1,1],
-     [1,0]]
-  ]
-};
-const colors = {
-  I:"#5df2ff",
-  O:"#ffe45d",
-  T:"#ff8ef2",
-  L:"#ffb15d",
-  J:"#5d8dff",
-  S:"#7dffb4",
-  Z:"#ff6b81"
-};
-
-function createBoard(){
+function init(){
   board = [];
   boardEl.innerHTML = '';
+  score = 0;
+  progress = 0;
+  updateScore(0);
+  updateProgress(0);
+
+  // random doldur, başlarken büyük zincir olursa sorun değil
   for(let r=0;r<rows;r++){
     const row = [];
     for(let c=0;c<cols;c++){
-      row.push(0);
-      const cell = document.createElement('div');
-      cell.className = 'cell';
+      const t = randomType();
+      row.push(t);
+      const cell = createCell(r,c,t);
       boardEl.appendChild(cell);
     }
     board.push(row);
   }
+
+  // başlangıçta otomatik eşleşmeleri temizle (daha temiz başlasın)
+  resolveBoard();
 }
 
-function newPiece(){
-  const types = Object.keys(shapes);
-  const type = types[Math.floor(Math.random()*types.length)];
-  const shape = shapes[type];
-  current = {
-    type,
-    shape,
-    rot:0,
-    matrix:shape[0],
-    row:0,
-    col:3
-  };
-  if (collide(current.matrix, current.row, current.col)){
-    gameOver = true;
-    showOverlay("<strong>Game Over</strong><br>Doge yolda kaldı.<br>Yeniden başlamak için yenile.");
-  }
+function randomType(){
+  return types[Math.floor(Math.random()*types.length)];
 }
 
-function rotatePiece(){
-  if(!current) return;
-  const nextRot = (current.rot + 1) % current.shape.length;
-  const nextMat = current.shape[nextRot];
-  if(!collide(nextMat, current.row, current.col)){
-    current.rot = nextRot;
-    current.matrix = nextMat;
-  }
+function createCell(r,c,t){
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.dataset.r = r;
+  cell.dataset.c = c;
+  const gem = document.createElement('div');
+  gem.className = 'gem '+t;
+  cell.appendChild(gem);
+
+  cell.addEventListener('pointerdown', ()=>onCellTap(r,c));
+  return cell;
 }
 
-function collide(matrix, row, col){
-  for(let r=0;r<matrix.length;r++){
-    for(let c=0;c<matrix[r].length;c++){
-      if(matrix[r][c]){
-        const nr = row + r;
-        const nc = col + c;
-        if(nr < 0 || nr >= rows || nc < 0 || nc >= cols) return true;
-        if(board[nr][nc]) return true;
-      }
+function onCellTap(r,c){
+  if(animating) return;
+  const cell = getCell(r,c);
+
+  if(!selected){
+    selected = {r,c};
+    cell.classList.add('selected');
+  }else{
+    const same = (selected.r === r && selected.c === c);
+    if(same){
+      // iptal
+      cell.classList.remove('selected');
+      selected = null;
+      return;
     }
-  }
-  return false;
-}
-
-function merge(){
-  for(let r=0;r<current.matrix.length;r++){
-    for(let c=0;c<current.matrix[r].length;c++){
-      if(current.matrix[r][c]){
-        const nr = current.row + r;
-        const nc = current.col + c;
-        if(nr>=0 && nr<rows && nc>=0 && nc<cols){
-          board[nr][nc] = current.type;
-        }
-      }
+    const isNeighbor =
+      (Math.abs(selected.r - r) + Math.abs(selected.c - c) === 1);
+    if(!isNeighbor){
+      // önceki seçimi kaldır, yeni seç
+      getCell(selected.r,selected.c).classList.remove('selected');
+      selected = {r,c};
+      cell.classList.add('selected');
+      return;
     }
+    // komşu: swap dene
+    swapAndCheck(selected.r,selected.c,r,c);
+    getCell(selected.r,selected.c).classList.remove('selected');
+    selected = null;
   }
 }
 
-function clearLines(){
-  let cleared = 0;
-  for(let r=rows-1;r>=0;r--){
-    if(board[r].every(v=>v!==0)){
-      cleared++;
-      for(let rr=r;rr>0;rr--){
-        board[rr] = board[rr-1].slice();
-      }
-      board[0] = Array(cols).fill(0);
-      r++;
-    }
-  }
-  if(cleared>0){
-    lines += cleared;
-    score += cleared * 100;
-    scoreEl.textContent = score;
-    linesEl.textContent = lines;
-    advanceDoge(cleared);
-    // biraz hızlandır
-    dropInterval = Math.max(150, dropInterval - cleared*15);
-  }
+function getCell(r,c){
+  return boardEl.children[r*cols + c];
 }
 
-function advanceDoge(cleared){
-  dogeProgressLines += cleared;
-  if(dogeProgressLines > targetLines) dogeProgressLines = targetLines;
-  lineProgEl.textContent = dogeProgressLines;
-
-  const maxMove = trackBar.clientWidth - dogeMarker.offsetWidth - 40; // finish'e kadar
-  const ratio = Math.min(dogeProgressLines / targetLines, 1);
-  dogeMarker.style.transform = `translateX(${maxMove * ratio}px)`;
-
-  if(ratio === 1){
-    if(!gameOver){
-      gameOver = true;
-      showOverlay("<strong>Doge FINISH!</strong><br>Uzay pistini temizledin. GG 😎");
-    }
-  }
+function swapTypes(r1,c1,r2,c2){
+  const tmp = board[r1][c1];
+  board[r1][c1] = board[r2][c2];
+  board[r2][c2] = tmp;
 }
 
-function draw(){
-  // tüm hücreleri sıfırla
-  const cells = boardEl.children;
-  for(let i=0;i<cells.length;i++){
-    cells[i].className = 'cell';
-    cells[i].style.background = 'rgba(6,6,20,.98)';
-  }
-  // yerleşmiş bloklar
+function refreshVisual(){
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
-      if(board[r][c]){
-        const idx = r*cols + c;
-        cells[idx].classList.add('filled');
-        cells[idx].style.background = colors[board[r][c]] || '#ff4e4e';
-      }
+      const cell = getCell(r,c);
+      cell.className = 'cell';
+      const gem = cell.firstChild;
+      gem.className = 'gem '+board[r][c];
+      gem.style.opacity = 1;
+      gem.style.transform = 'scale(1)';
     }
   }
-  // aktif parça
-  if(current){
-    for(let r=0;r<current.matrix.length;r++){
-      for(let c=0;c<current.matrix[r].length;c++){
-        if(current.matrix[r][c]){
-          const nr = current.row + r;
-          const nc = current.col + c;
-          if(nr>=0 && nr<rows && nc>=0 && nc<cols){
-            const idx = nr*cols + nc;
-            cells[idx].classList.add('active');
-            cells[idx].style.background = colors[current.type] || '#ffce3a';
+}
+
+function swapAndCheck(r1,c1,r2,c2){
+  animating = true;
+  swapTypes(r1,c1,r2,c2);
+  refreshVisual();
+  const matches = findMatches();
+  if(matches.length === 0){
+    // geçersiz hamle, geri al
+    setTimeout(()=>{
+      swapTypes(r1,c1,r2,c2);
+      refreshVisual();
+      animating = false;
+    },120);
+  }else{
+    handleMatches(matches);
+  }
+}
+
+function findMatches(){
+  const toClear = [];
+
+  // yatay
+  for(let r=0;r<rows;r++){
+    let count = 1;
+    for(let c=1;c<=cols;c++){
+      const curr = c<cols ? board[r][c] : null;
+      const prev = board[r][c-1];
+      if(curr && curr === prev){
+        count++;
+      }else{
+        if(count>=3){
+          for(let k=0;k<count;k++){
+            toClear.push({r,c:c-1-k});
           }
         }
+        count = 1;
       }
     }
   }
-}
 
-function drop(){
-  if(gameOver) return;
-  if(!current) return;
-  if(!collide(current.matrix, current.row+1, current.col)){
-    current.row++;
-  }else{
-    merge();
-    clearLines();
-    newPiece();
+  // dikey
+  for(let c=0;c<cols;c++){
+    let count = 1;
+    for(let r=1;r<=rows;r++){
+      const curr = r<rows ? board[r][c] : null;
+      const prev = board[r-1][c];
+      if(curr && curr === prev){
+        count++;
+      }else{
+        if(count>=3){
+          for(let k=0;k<count;k++){
+            toClear.push({r:r-1-k,c});
+          }
+        }
+        count = 1;
+      }
+    }
   }
+
+  // aynı hücreyi iki kez ekleme
+  const map = {};
+  const unique = [];
+  toClear.forEach(p=>{
+    const key = p.r+'-'+p.c;
+    if(!map[key]){
+      map[key]=1;
+      unique.push(p);
+    }
+  });
+  return unique;
 }
 
-function hardDrop(){
-  if(gameOver || !current) return;
-  while(!collide(current.matrix, current.row+1, current.col)){
-    current.row++;
-  }
-  merge();
-  clearLines();
-  newPiece();
-}
-
-function move(dir){
-  if(gameOver || !current) return;
-  const nc = current.col + dir;
-  if(!collide(current.matrix, current.row, nc)){
-    current.col = nc;
-  }
-}
-
-function showOverlay(msg){
-  overlay.innerHTML = msg;
-  overlay.style.display = 'block';
-}
-
-/* LOOP */
-function update(time=0){
-  if(gameOver){
-    draw();
+function handleMatches(matches){
+  if(matches.length === 0){
+    animating = false;
     return;
   }
-  const delta = time - lastTime;
-  lastTime = time;
-  dropCounter += delta;
-  if(dropCounter > dropInterval){
-    drop();
-    dropCounter = 0;
-  }
-  draw();
-  requestAnimationFrame(update);
+
+  // animasyon
+  matches.forEach(p=>{
+    const cell = getCell(p.r,p.c);
+    cell.classList.add('pop');
+  });
+
+  // skor + Doge progress
+  const gain = matches.length * 10;
+  updateScore(score + gain);
+  advanceProgress(matches.length);
+
+  setTimeout(()=>{
+    // temizle
+    matches.forEach(p=>{
+      board[p.r][p.c] = null;
+    });
+    // yerçekimi
+    for(let c=0;c<cols;c++){
+      let writeRow = rows-1;
+      for(let r=rows-1;r>=0;r--){
+        if(board[r][c]){
+          board[writeRow][c] = board[r][c];
+          if(writeRow!==r) board[r][c] = null;
+          writeRow--;
+        }
+      }
+      // yeni taşlar
+      for(let r=writeRow;r>=0;r--){
+        board[r][c] = randomType();
+      }
+    }
+    refreshVisual();
+    // yeni otomatik maç var mı tekrar bak
+    const more = findMatches();
+    if(more.length>0){
+      handleMatches(more);
+    }else{
+      animating = false;
+    }
+  }, 180);
 }
 
-/* INIT */
-createBoard();
-newPiece();
-requestAnimationFrame(update);
-
-/* CONTROLS */
-document.addEventListener('keydown', e=>{
-  if(gameOver) return;
-  if(e.code === 'ArrowLeft'){
-    e.preventDefault(); move(-1);
-  }else if(e.code === 'ArrowRight'){
-    e.preventDefault(); move(1);
-  }else if(e.code === 'ArrowDown'){
-    e.preventDefault(); drop();
-  }else if(e.code === 'ArrowUp'){
-    e.preventDefault(); rotatePiece();
-  }else if(e.code === 'Space'){
-    e.preventDefault(); hardDrop();
+function advanceProgress(count){
+  if(progress>=1) return;
+  const step = 0.02 * count; // ayarlayabilirsin
+  progress += step;
+  if(progress>1) progress=1;
+  updateProgress(progress);
+  if(progress>=1){
+    showWin();
   }
-});
-
-// mobile buttons
-function control(action){
-  if(gameOver) return;
-  if(action==='left') move(-1);
-  else if(action==='right') move(1);
-  else if(action==='down') drop();
-  else if(action==='rotate') rotatePiece();
-  else if(action==='drop') hardDrop();
 }
+
+function updateScore(v){
+  score = v;
+  scoreEl.textContent = score;
+}
+
+function updateProgress(p){
+  const percent = Math.round(p*100);
+  progressText.textContent = percent + "%";
+  const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 26; // finish'e kadar
+  dogeMarker.style.transform = `translateX(${maxMove * p}px)`;
+}
+
+function showWin(){
+  overlayText.innerHTML = "<strong>Doge FINISH!</strong><br>Meyve patlata patlata yarışı kazandın. 🐕🚀";
+  overlay.style.display = "block";
+}
+
+function restart(){
+  overlay.style.display = "none";
+  init();
+}
+
+function resolveBoard(){
+  // baştaki otomatik eşleşmeleri temizle
+  let m = findMatches();
+  if(m.length){
+    handleMatches(m);
+  }else{
+    animating = false;
+  }
+}
+
+/* START */
+init();
 </script>
 </body>
 </html>
