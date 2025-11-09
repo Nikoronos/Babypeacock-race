@@ -1,22 +1,381 @@
-<!-- Doge animasyonu bölüm -->
-<section style="text-align:center; margin-top:20px;">
-  <h2 style="color:#ffdd73; font-size:18px;">Doge Moves!</h2>
-  <video id="dogeVideo" width="480" autoplay loop muted playsinline
-         style="border:4px solid #ff4e4e; border-radius:12px; box-shadow:0 0 14px rgba(255,77,77,0.8);">
-    <source src="Doge.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  <div>
-    <button onclick="restartDoge()" style="padding:6px 12px; margin-top:8px; font-size:12px; cursor:pointer;">
-      Restart Doge Move
-    </button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doge Run – Babypeacock Race</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      background:#04020a;
+      color:#fff;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      overflow:hidden;
+    }
+    .wrap{
+      width:100%;
+      max-width:960px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .title{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:4px;
+      text-align:center;
+    }
+    .title h1{
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:0.03em;
+    }
+    .title span{
+      font-size:10px;
+      opacity:.9;
+    }
+    .badge{
+      font-size:9px;
+      padding:3px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.7);
+      display:inline-flex;
+      gap:4px;
+      align-items:center;
+      margin-top:2px;
+    }
+    .badge strong{color:#ffce3a;}
+
+    .info{
+      font-size:9px;
+      opacity:.9;
+      text-align:center;
+    }
+
+    canvas{
+      margin-top:6px;
+      width:100%;
+      max-width:960px;
+      height:auto;
+      border-radius:18px;
+      background:#05000c;
+      box-shadow:0 14px 30px rgba(0,0,0,.95);
+      touch-action:none;
+    }
+
+    .hint{
+      margin-top:4px;
+      font-size:9px;
+      opacity:.85;
+      text-align:center;
+    }
+    .hint span{
+      color:#ffce3a;
+      font-weight:600;
+    }
+
+    /* start / game over mesajları */
+    .overlayText{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      font-size:16px;
+      padding:8px 16px;
+      border-radius:12px;
+      background:rgba(0,0,0,.78);
+      box-shadow:0 0 16px rgba(0,0,0,.95);
+      display:none;
+      text-align:center;
+      line-height:1.4;
+    }
+    .overlayText strong{color:#ffce3a;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">
+    <h1>🐕 Doge Run</h1>
+    <span>Tap to jump over obstacles · Babypeacock universe mini runner</span>
+    <div class="badge">
+      <span>Chain:</span> <strong>#feathers</strong>
+      <span>|</span>
+      <span>Auto start · 2.5D vibe</span>
+    </div>
   </div>
-</section>
+
+  <div class="info">
+    Doge kendi kendine koşuyor. Ekrana <strong>dokun</strong> veya <strong>boşluk</strong> tuşuna bas,
+    engellerin üzerinden zıplasın. Çarparsan oyun reset olur.
+  </div>
+
+  <!-- Oyun alanı -->
+  <canvas id="gameCanvas" width="900" height="260"></canvas>
+  <div class="overlayText" id="overlay"></div>
+
+  <div class="hint">
+    <span>Kontroller:</span> Dokun / Tıkla / Boşluk = Zıpla ·
+    <span>Hedef:</span> Mümkün olduğunca uzun hayatta kal.
+  </div>
+</div>
+
+<!-- Doge koşu animasyonu (görünmez video, canvas'a çiziyoruz) -->
+<video id="dogeVideo" src="Doge.mp4" loop muted playsinline style="display:none"></video>
 
 <script>
-  function restartDoge(){
-    const vid = document.getElementById("dogeVideo");
-    vid.currentTime = 0;
-    vid.play();
+/*
+  Basit Doge Runner
+  - Doge.mp4 video kareleri canvas'a çizilir.
+  - Doge sabit x'te koşar, engeller sola akar.
+  - Tıkla / dokun / Space ile zıplar.
+*/
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const dogeVideo = document.getElementById("dogeVideo");
+const overlay = document.getElementById("overlay");
+
+let gameStarted = false;
+let gameOver = false;
+
+const groundY = canvas.height - 40;
+const doge = {
+  x: 90,
+  y: groundY - 70,
+  width: 88,
+  height: 70,
+  vy: 0,
+  gravity: 0.7,
+  jumpForce: 12,
+  onGround: true
+};
+
+let obstacles = [];
+let spawnTimer = 0;
+let score = 0;
+let lastTime = 0;
+
+// Engeller
+function spawnObstacle(){
+  const width = 26 + Math.random()*18; // 26-44 px
+  const height = 30 + Math.random()*40; // 30-70 px
+  obstacles.push({
+    x: canvas.width + 10,
+    y: groundY - height,
+    width,
+    height,
+    passed:false
+  });
+}
+
+// Çizimler
+function drawBackground(){
+  // Gökyüzü + gradient
+  const grad = ctx.createLinearGradient(0,0,0,canvas.height);
+  grad.addColorStop(0,"#2b0a66");
+  grad.addColorStop(0.4,"#5e26aa");
+  grad.addColorStop(0.7,"#c45a6a");
+  grad.addColorStop(1,"#ff7a35");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Koşu zemini
+  ctx.fillStyle = "#2b0d09";
+  ctx.fillRect(0,groundY,canvas.width,canvas.height-groundY);
+
+  // Şerit çizgileri
+  ctx.strokeStyle="rgba(255,255,255,0.18)";
+  ctx.lineWidth=1;
+  for(let i=0;i<5;i++){
+    const y = groundY - 8 - i*26;
+    ctx.beginPath();
+    ctx.moveTo(40,y);
+    ctx.lineTo(canvas.width-40,y);
+    ctx.stroke();
   }
+}
+
+// Doge çiz
+function drawDoge(){
+  if(dogeVideo.readyState >= 2){
+    // Videodan kare çiz
+    const vw = dogeVideo.videoWidth || 640;
+    const vh = dogeVideo.videoHeight || 360;
+    const aspect = vw/vh;
+    let dw = doge.width;
+    let dh = dw/aspect;
+    if(dh > doge.height){
+      dh = doge.height;
+      dw = dh*aspect;
+    }
+    const dx = doge.x - (dw-doge.width)/2;
+    const dy = doge.y + (doge.height-dh);
+    ctx.drawImage(dogeVideo, 0,0,vw,vh, dx,dy, dw,dh);
+  }else{
+    // Video hazır değilse placeholder
+    ctx.fillStyle="#ffd54f";
+    ctx.fillRect(doge.x, doge.y, doge.width, doge.height);
+  }
+}
+
+// Engeller çiz
+function drawObstacles(){
+  ctx.fillStyle = "#ff3636";
+  obstacles.forEach(o=>{
+    ctx.fillRect(o.x,o.y,o.width,o.height);
+    // üstüne hafif highlight
+    ctx.fillStyle="rgba(255,255,255,0.1)";
+    ctx.fillRect(o.x,o.y,o.width,4);
+    ctx.fillStyle = "#ff3636";
+  });
+}
+
+// Score
+function drawScore(){
+  ctx.fillStyle = "rgba(0,0,0,0.75)";
+  ctx.fillRect(14,10,110,26);
+  ctx.fillStyle="#ffce3a";
+  ctx.font="bold 14px system-ui";
+  ctx.fillText("Score: "+score.toFixed(0),22,28);
+}
+
+// Fizik & hareket
+function update(delta){
+  if(gameOver || !gameStarted) return;
+
+  // Doge yerçekimi
+  doge.vy += doge.gravity;
+  doge.y += doge.vy;
+
+  // Zemine çarpmasın
+  if(doge.y + doge.height >= groundY){
+    doge.y = groundY - doge.height;
+    doge.vy = 0;
+    doge.onGround = true;
+  }
+
+  // Engelleri güncelle
+  const speed = 260 * (delta/1000); // px/sn
+  spawnTimer -= delta;
+  if(spawnTimer <= 0){
+    spawnObstacle();
+    spawnTimer = 900 + Math.random()*600; // 0.9 - 1.5 sn
+  }
+
+  obstacles.forEach(o=>{
+    o.x -= speed;
+    // Score
+    if(!o.passed && o.x + o.width < doge.x){
+      o.passed = true;
+      score += 10;
+    }
+  });
+  obstacles = obstacles.filter(o => o.x + o.width > -40);
+
+  // Çarpışma
+  for(const o of obstacles){
+    if(rectsCollide(doge,o)){
+      endGame();
+      break;
+    }
+  }
+}
+
+function rectsCollide(a,b){
+  return (
+    a.x < b.x + b.width &&
+    a.x + a.width > b.x &&
+    a.y < b.y + b.height &&
+    a.y + a.height > b.y
+  );
+}
+
+// Ana döngü
+function loop(timestamp){
+  if(!lastTime) lastTime = timestamp;
+  const delta = timestamp - lastTime;
+  lastTime = timestamp;
+
+  drawBackground();
+  drawObstacles();
+  drawDoge();
+  drawScore();
+
+  update(delta);
+
+  requestAnimationFrame(loop);
+}
+
+// Başlat
+function startGame(){
+  if(gameStarted && !gameOver) return;
+  // reset
+  gameStarted = true;
+  gameOver = false;
+  score = 0;
+  obstacles = [];
+  doge.y = groundY - doge.height;
+  doge.vy = 0;
+  doge.onGround = true;
+  overlay.style.display = "none";
+  if(dogeVideo.paused) dogeVideo.play().catch(()=>{});
+}
+
+function endGame(){
+  gameOver = true;
+  overlay.innerHTML = "<strong>Ouch!</strong><br/>Doge engele çarptı.<br/><small>Tekrar başlatmak için dokun / boşluk.</small>";
+  overlay.style.display = "block";
+}
+
+// Zıplama
+function jump(){
+  if(!gameStarted){
+    startGame();
+  }
+  if(!gameStarted || gameOver) return;
+  if(doge.onGround){
+    doge.vy = -doge.jumpForce;
+    doge.onGround = false;
+  }
+}
+
+// Inputlar
+canvas.addEventListener("pointerdown", e=>{
+  e.preventDefault();
+  if(gameOver){
+    startGame();
+  }else{
+    jump();
+  }
+});
+window.addEventListener("keydown", e=>{
+  if(e.code === "Space" || e.code === "ArrowUp"){
+    e.preventDefault();
+    if(gameOver) startGame();
+    else jump();
+  }
+});
+
+// İlk overlay
+overlay.innerHTML = "<strong>Doge Run</strong><br/>Başlamak için dokun veya boşluğa bas.";
+overlay.style.display = "block";
+
+// Video hazır olduğunda oyunu başlat
+dogeVideo.addEventListener("canplay", ()=>{
+  // otomatik start vibe
+  startGame();
+});
+dogeVideo.play().catch(()=>{}); // otomatik oynatmayı dene
+
+// Döngüyü başlat
+requestAnimationFrame(loop);
 </script>
+</body>
+</html>
