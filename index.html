@@ -25,7 +25,7 @@
       align-items:center;
     }
 
-    /* ÜST BAŞLIK */
+    /* BAŞLIK */
     .title{
       text-align:center;
       display:flex;
@@ -98,12 +98,10 @@
       display:flex;
       align-items:flex-end;
       justify-content:center;
-      /* siyah kutu yok, tamamen şeffaf */
-      background:transparent;
+      background:transparent; /* siyah kutu yok */
       box-shadow:none;
       transition:transform .2s ease-out;
     }
-    .doge-marker img,
     .doge-marker video{
       height:30px;
       border-radius:8px;
@@ -111,7 +109,7 @@
       display:block;
     }
 
-    /* MATCH-3 TAHTA */
+    /* MATCH-3 BOARD */
     .board-wrap{
       margin-top:6px;
       padding:6px;
@@ -157,7 +155,7 @@
       border-radius:50%;
       box-shadow:0 0 8px rgba(0,0,0,.6);
       transform:scale(1);
-      transition:transform .08s;
+      transition:transform .08s, opacity .08s;
     }
     .cell.selected .gem{
       transform:scale(1.1);
@@ -228,7 +226,7 @@
     </div>
   </div>
 
-  <!-- DOGE PROGRESS BAR -->
+  <!-- DOGE PROGRESS -->
   <div class="race-wrap">
     <div class="race-label">
       <span>3 aynı meyve → patlar, Doge ilerler.</span>
@@ -236,8 +234,8 @@
     </div>
     <div class="race-bar" id="raceBar">
       <div class="doge-marker" id="dogeMarker">
-        <!-- Doge resmi (arka plan kutusuz). Doge.png yoksa Doge.mp4 kullan -->
-        <img id="dogeImg" src="Doge.png" alt="Doge">
+        <!-- Doge mp4 animasyonu -->
+        <video id="dogeVideo" src="Doge.mp4" autoplay loop muted playsinline></video>
       </div>
       <div class="finish-tag">FINISH</div>
     </div>
@@ -251,10 +249,10 @@
     </div>
     <div class="board" id="board"></div>
     <div class="hint">
-      Tahtaya dokun:
-      önce bir taşı seç, sonra yanındakiyle yer değiştir.
-      Sadece <strong>yan yana</strong> taşlar değişir ve mutlaka 3’lü eşleşme olmalı.
-      Her patlamada skor + Doge ilerler. %100 olunca Doge finishe ulaşır.
+      Tahtaya dokun: önce bir taşı seç, sonra yanındakiyle yer değiştir.
+      Sadece <strong>yan yana</strong> taşlar değişir ve hamlen maç oluşturmalı.
+      Her patlamada skor <strong>2ⁿ</strong> artar (n = patlayan taş sayısı) ve Doge ilerler.
+      %100 olunca Doge finishe ulaşır.
     </div>
   </div>
 </div>
@@ -265,14 +263,13 @@
 </div>
 
 <script>
-/* === Basit Match-3 + Doge progress === */
+/* ==== Match-3 + Doge Progress (Mobil) ==== */
 
 const rows = 8;
 const cols = 8;
-const types = ['r','g','b','y','p','o']; // elma vb renkler
+const types = ['r','g','b','y','p','o']; // renkler
 const boardEl = document.getElementById('board');
 const scoreEl = document.getElementById('score');
-const movesEl = document.getElementById('moves');
 const overlay = document.getElementById('overlay');
 const overlayText = document.getElementById('overlayText');
 const dogeMarker = document.getElementById('dogeMarker');
@@ -283,7 +280,7 @@ let board = [];
 let selected = null;
 let animating = false;
 let score = 0;
-let progress = 0; // 0..1 arası
+let progress = 0; // 0..1
 
 function init(){
   board = [];
@@ -292,8 +289,10 @@ function init(){
   progress = 0;
   updateScore(0);
   updateProgress(0);
+  selected = null;
+  animating = false;
+  overlay.style.display = "none";
 
-  // random doldur, başlarken büyük zincir olursa sorun değil
   for(let r=0;r<rows;r++){
     const row = [];
     for(let c=0;c<cols;c++){
@@ -305,7 +304,7 @@ function init(){
     board.push(row);
   }
 
-  // başlangıçta otomatik eşleşmeleri temizle (daha temiz başlasın)
+  // başlangıçta varsa otomatik eşleşmeleri temizle
   resolveBoard();
 }
 
@@ -318,8 +317,9 @@ function createCell(r,c,t){
   cell.className = 'cell';
   cell.dataset.r = r;
   cell.dataset.c = c;
+
   const gem = document.createElement('div');
-  gem.className = 'gem '+t;
+  gem.className = 'gem ' + t;
   cell.appendChild(gem);
 
   cell.addEventListener('pointerdown', ()=>onCellTap(r,c));
@@ -336,21 +336,22 @@ function onCellTap(r,c){
   }else{
     const same = (selected.r === r && selected.c === c);
     if(same){
-      // iptal
       cell.classList.remove('selected');
       selected = null;
       return;
     }
     const isNeighbor =
       (Math.abs(selected.r - r) + Math.abs(selected.c - c) === 1);
+
     if(!isNeighbor){
-      // önceki seçimi kaldır, yeni seç
+      // eskiyi kaldır, yeni seç
       getCell(selected.r,selected.c).classList.remove('selected');
       selected = {r,c};
       cell.classList.add('selected');
       return;
     }
-    // komşu: swap dene
+
+    // komşu -> swap dene
     swapAndCheck(selected.r,selected.c,r,c);
     getCell(selected.r,selected.c).classList.remove('selected');
     selected = null;
@@ -373,7 +374,7 @@ function refreshVisual(){
       const cell = getCell(r,c);
       cell.className = 'cell';
       const gem = cell.firstChild;
-      gem.className = 'gem '+board[r][c];
+      gem.className = 'gem ' + board[r][c];
       gem.style.opacity = 1;
       gem.style.transform = 'scale(1)';
     }
@@ -384,6 +385,7 @@ function swapAndCheck(r1,c1,r2,c2){
   animating = true;
   swapTypes(r1,c1,r2,c2);
   refreshVisual();
+
   const matches = findMatches();
   if(matches.length === 0){
     // geçersiz hamle, geri al
@@ -411,7 +413,7 @@ function findMatches(){
       }else{
         if(count>=3){
           for(let k=0;k<count;k++){
-            toClear.push({r,c:c-1-k});
+            toClear.push({r, c:c-1-k});
           }
         }
         count = 1;
@@ -430,7 +432,7 @@ function findMatches(){
       }else{
         if(count>=3){
           for(let k=0;k<count;k++){
-            toClear.push({r:r-1-k,c});
+            toClear.push({r:r-1-k, c});
           }
         }
         count = 1;
@@ -438,16 +440,16 @@ function findMatches(){
     }
   }
 
-  // aynı hücreyi iki kez ekleme
-  const map = {};
+  // unique
+  const seen = new Set();
   const unique = [];
-  toClear.forEach(p=>{
-    const key = p.r+'-'+p.c;
-    if(!map[key]){
-      map[key]=1;
+  for(const p of toClear){
+    const key = p.r + '-' + p.c;
+    if(!seen.has(key)){
+      seen.add(key);
       unique.push(p);
     }
-  });
+  }
   return unique;
 }
 
@@ -457,55 +459,62 @@ function handleMatches(matches){
     return;
   }
 
-  // animasyon
+  // patlama animasyonu
   matches.forEach(p=>{
     const cell = getCell(p.r,p.c);
     cell.classList.add('pop');
   });
 
-  // skor + Doge progress
-  const gain = matches.length * 10;
+  // PUAN: 2^n, n = patlayan taş sayısı (tek hamlede)
+  const n = matches.length;
+  const gain = Math.pow(2, n);
   updateScore(score + gain);
-  advanceProgress(matches.length);
+
+  // Doge ilerlemesi
+  advanceProgress(n);
 
   setTimeout(()=>{
-    // temizle
+    // tahtadan sil
     matches.forEach(p=>{
       board[p.r][p.c] = null;
     });
-    // yerçekimi
+
+    // sütun sütun aşağı kaydır (gravity)
     for(let c=0;c<cols;c++){
-      let writeRow = rows-1;
+      let writeRow = rows - 1;
       for(let r=rows-1;r>=0;r--){
         if(board[r][c]){
           board[writeRow][c] = board[r][c];
-          if(writeRow!==r) board[r][c] = null;
+          if(writeRow !== r) board[r][c] = null;
           writeRow--;
         }
       }
-      // yeni taşlar
+      // yukarıyı yeni taşla doldur
       for(let r=writeRow;r>=0;r--){
         board[r][c] = randomType();
       }
     }
+
     refreshVisual();
-    // yeni otomatik maç var mı tekrar bak
+
+    // zincirleme eşleşme varsa devam
     const more = findMatches();
     if(more.length>0){
       handleMatches(more);
     }else{
       animating = false;
     }
-  }, 180);
+  },180);
 }
 
-function advanceProgress(count){
-  if(progress>=1) return;
-  const step = 0.02 * count; // ayarlayabilirsin
-  progress += step;
-  if(progress>1) progress=1;
+function advanceProgress(clearedCount){
+  if(progress >= 1) return;
+  // her taş için küçük adım: ayarlayabilirsin
+  const stepPerTile = 0.01; 
+  progress += clearedCount * stepPerTile;
+  if(progress > 1) progress = 1;
   updateProgress(progress);
-  if(progress>=1){
+  if(progress >= 1){
     showWin();
   }
 }
@@ -516,9 +525,9 @@ function updateScore(v){
 }
 
 function updateProgress(p){
-  const percent = Math.round(p*100);
+  const percent = Math.round(p * 100);
   progressText.textContent = percent + "%";
-  const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 26; // finish'e kadar
+  const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 26; // finish mesafesi
   dogeMarker.style.transform = `translateX(${maxMove * p}px)`;
 }
 
@@ -528,21 +537,10 @@ function showWin(){
 }
 
 function restart(){
-  overlay.style.display = "none";
   init();
 }
 
-function resolveBoard(){
-  // baştaki otomatik eşleşmeleri temizle
-  let m = findMatches();
-  if(m.length){
-    handleMatches(m);
-  }else{
-    animating = false;
-  }
-}
-
-/* START */
+/* Başlangıç: otomatik board kur */
 init();
 </script>
 </body>
