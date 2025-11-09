@@ -3,91 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Babypeacock Race</title>
+  <title>Babypeacock Block Race</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:#04020a;
       color:#fff;
+      min-height:100vh;
       display:flex;
       justify-content:center;
       align-items:flex-start;
-      min-height:100vh;
     }
-    .wrap{width:100%;max-width:1200px;padding:16px;}
+    .wrap{
+      width:100%;
+      max-width:1200px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
 
+    /* HEADER */
     .top{
-      display:flex;justify-content:space-between;align-items:flex-start;
-      gap:8px;flex-wrap:wrap;margin-bottom:6px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:8px;
+      flex-wrap:wrap;
     }
     .logo{
-      display:flex;align-items:center;gap:6px;
-      font-weight:800;font-size:22px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-weight:800;
+      font-size:22px;
     }
     .logo span{font-size:22px;}
     .tag{font-size:11px;opacity:.9;}
     .pill{
-      padding:6px 10px;border-radius:999px;
-      background:rgba(0,0,0,.65);font-size:9px;
-      display:flex;flex-direction:column;gap:1px;align-items:flex-end;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.65);
+      font-size:9px;
+      display:flex;
+      flex-direction:column;
+      gap:1px;
+      align-items:flex-end;
     }
     .pill strong{color:#ffd44a;font-size:10px;}
 
     .bar{
-      margin-top:4px;padding:6px 10px;
+      padding:6px 10px;
       border-radius:14px;
-      background:linear-gradient(to right,rgba(0,0,0,.9),rgba(112,29,190,.95));
-      display:flex;justify-content:space-between;align-items:center;
-      gap:8px;flex-wrap:wrap;font-size:10px;
+      background:linear-gradient(to right,rgba(0,0,0,.95),rgba(112,29,190,.95));
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      font-size:10px;
     }
     .label{font-weight:700;color:#ffdd73;margin-right:4px;}
-    .btns{display:flex;gap:6px;flex-wrap:wrap;}
-    button{
-      border:none;cursor:pointer;padding:6px 16px;border-radius:999px;
-      font-size:9px;font-weight:700;letter-spacing:.11em;
-      text-transform:uppercase;
-      background:#ff3636;color:#fff;
-      box-shadow:0 3px 10px rgba(0,0,0,.45);
-      transition:all .12s;
-    }
-    button:hover{
-      transform:translateY(-1px);
-      box-shadow:0 5px 14px rgba(0,0,0,.6);
-      background:#ff5555;
-    }
-    button.sec{
-      background:rgba(255,255,255,.08);
-      color:#ffdede;
-      box-shadow:none;
-    }
-    button.sec:hover{
-      background:rgba(255,255,255,.18);
-    }
-
-    .track-wrap{
-      margin-top:10px;
+    .runner-select{
       display:flex;
-      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      font-size:9px;
+    }
+    .runner-select label{
+      display:flex;
+      align-items:center;
+      gap:3px;
+      padding:3px 6px;
+      border-radius:10px;
+      background:rgba(0,0,0,.55);
+      cursor:pointer;
+    }
+    .runner-select input{accent-color:#ff3636;}
+
+    /* LAYOUT: LEFT GAME, RIGHT RACE */
+    .main{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+    }
+    @media(max-width:800px){
+      .main{flex-direction:column;align-items:center;}
     }
 
+    /* TETRIS BOARD */
+    .board-wrap{
+      background:radial-gradient(circle at 0 0,rgba(255,255,255,.1),transparent 55%);
+      padding:8px;
+      border-radius:14px;
+      box-shadow:0 8px 20px rgba(0,0,0,.9);
+    }
+    .board-title{
+      font-size:10px;
+      margin-bottom:4px;
+      display:flex;
+      justify-content:space-between;
+      gap:6px;
+      align-items:center;
+    }
+    .board-title span strong{color:#ffce3a;}
+    #score{font-weight:700;color:#ffce3a;}
+    #lines{font-weight:700;color:#7dffb4;}
+
+    #board{
+      width:200px;
+      height:400px;
+      background:rgba(0,0,0,.9);
+      border-radius:8px;
+      display:grid;
+      grid-template-columns:repeat(10,1fr);
+      grid-template-rows:repeat(20,1fr);
+      gap:1px;
+      padding:2px;
+    }
+    .cell{
+      background:#0a0a12;
+      border-radius:2px;
+    }
+    .cell.filled{
+      background:#ff3636;
+    }
+    .cell.current{
+      background:#ffce3a;
+    }
+    .hint{
+      font-size:9px;
+      margin-top:4px;
+      opacity:.85;
+    }
+
+    /* RACE TRACK */
     .track{
       position:relative;
-      width:100%;
-      max-width:1200px;
+      flex:1;
       height:260px;
       border-radius:22px;
       overflow:hidden;
-      box-shadow:0 14px 30px rgba(0,0,0,.9);
-      background:#0b0215;
+      box-shadow:0 12px 26px rgba(0,0,0,.95);
+      background:#0a0215;
     }
-
     .sky{
       position:absolute;inset:0;z-index:0;
       background:
-        radial-gradient(circle at 10% 0,rgba(255,255,255,.18)0,transparent40%),
-        radial-gradient(circle at 85% -5%,rgba(255,0,255,.25)0,transparent55%),
-        radial-gradient(circle at 40% -10%,rgba(120,80,255,.3)0,transparent55%),
+        radial-gradient(circle at 10% 0,rgba(255,255,255,.16)0,transparent40%),
+        radial-gradient(circle at 85% -5%,rgba(255,0,255,.22)0,transparent55%),
+        radial-gradient(circle at 40% -10%,rgba(120,80,255,.26)0,transparent55%),
         linear-gradient(to bottom,#2b0a66 0%,#5e26aa 40%,#c45a6a 65%,#ff7a35 82%,#c63b1c 100%);
       animation:sky 5s ease-in-out infinite alternate;
     }
@@ -95,7 +162,6 @@
       0%{filter:brightness(1);}
       100%{filter:brightness(1.08) saturate(1.06);}
     }
-
     .mount{
       position:absolute;left:-40px;right:-40px;bottom:37%;height:40px;z-index:1;
       background:
@@ -104,14 +170,15 @@
         radial-gradient(circle at 75% 100%,rgba(145,45,65,.9)0,transparent70%);
       filter:blur(.5px);
     }
-
     .ground{
       position:absolute;left:-40px;right:-40px;bottom:0;height:40%;z-index:2;
       background:
         repeating-linear-gradient(
           to right,
-          rgba(255,255,255,.55),rgba(255,255,255,.55)24px,
-          transparent24px,transparent48px
+          rgba(255,255,255,.5),
+          rgba(255,255,255,.5)24px,
+          transparent24px,
+          transparent48px
         ),
         linear-gradient(to top,#ff7a35,#f2642c);
       background-size:220px 3px,100% 100%;
@@ -122,17 +189,15 @@
       from{background-position-x:0,0;}
       to{background-position-x:-220px,0;}
     }
-    .ground.stop{animation-play-state:paused;}
 
     .lane{
       position:absolute;
       left:7%;
       right:5%;
       height:32px;
-      border-bottom:2px solid rgba(255,255,255,.28);
+      border-bottom:2px solid rgba(255,255,255,.24);
       z-index:3;
     }
-
     .flag{
       position:absolute;top:20px;right:5%;width:14px;height:72%;
       background-image:linear-gradient(to bottom,#fff 0,#fff 6px,#000 6px,#000 12px);
@@ -143,12 +208,12 @@
     }
 
     .banner{
-      position:absolute;top:12px;left:50%;
+      position:absolute;top:10px;left:50%;
       transform:translateX(-50%);
       padding:4px 14px;
       border-radius:999px;
       font-size:10px;
-      background:rgba(0,0,0,.88);
+      background:rgba(0,0,0,.9);
       box-shadow:0 4px 10px rgba(0,0,0,.8);
       display:none;
       white-space:nowrap;
@@ -160,6 +225,20 @@
       font-weight:800;
     }
 
+    /* Runner idle + run anim */
+    @keyframes idle{
+      0%{transform:translateY(0);}
+      50%{transform:translateY(-1px);}
+      100%{transform:translateY(0);}
+    }
+    @keyframes runMove{
+      0%{transform:translateY(0) rotate(0deg);}
+      25%{transform:translateY(-3px) rotate(-1deg);}
+      50%{transform:translateY(0) rotate(1deg);}
+      75%{transform:translateY(-2px) rotate(-1deg);}
+      100%{transform:translateY(0) rotate(0deg);}
+    }
+
     .runner{
       position:absolute;
       display:flex;
@@ -167,9 +246,10 @@
       gap:4px;
       z-index:5;
       transform-origin:center bottom;
+      animation:idle 1s ease-in-out infinite;
     }
     .runner img{
-      height:46px;
+      height:42px;
       filter:drop-shadow(0 2px 4px rgba(0,0,0,.9));
     }
     .name{
@@ -183,22 +263,8 @@
       color:#02110c;
       font-weight:700;
     }
-
-    @keyframes run{
-      0%{transform:translateY(0);}
-      25%{transform:translateY(-2px);}
-      50%{transform:translateY(0);}
-      75%{transform:translateY(-1px);}
-      100%{transform:translateY(0);}
-    }
-    .runner.go{animation:run .18s linear infinite;}
-
-    @media(max-width:600px){
-      .wrap{padding:10px;}
-      .logo{font-size:18px;}
-      .track{height:230px;}
-      .runner img{height:40px;}
-      .lane{height:28px;}
+    .runner.active{
+      animation:runMove .2s linear infinite;
     }
   </style>
 </head>
@@ -206,8 +272,8 @@
 <div class="wrap">
   <div class="top">
     <div>
-      <div class="logo"><span>🦚</span>Babypeacock Race</div>
-      <div class="tag">Everyone runs — we win.</div>
+      <div class="logo"><span>🦚</span>Babypeacock Block Race</div>
+      <div class="tag">Clear blocks. Push your runner. Everyone runs — we win.</div>
     </div>
     <div class="pill">
       <span>Feather: <strong>#feathers 🪶</strong></span>
@@ -216,18 +282,40 @@
   </div>
 
   <div class="bar">
-    <div><span class="label">Final Sprint!</span><span id="status">Babypeacock stays on top.</span></div>
-    <div class="btns">
-      <button id="start">Start Race</button>
-      <button id="reset" class="sec">Reset</button>
+    <div>
+      <span class="label">Final Sprint:</span>
+      <span id="status">Choose your runner and start stacking.</span>
+    </div>
+    <div class="runner-select" id="runnerSelect">
+      <span>Pick your runner:</span>
+      <label><input type="radio" name="runner" value="peacock" checked>Peacock</label>
+      <label><input type="radio" name="runner" value="ostrich">Ostrich</label>
+      <label><input type="radio" name="runner" value="doge">Doge</label>
+      <label><input type="radio" name="runner" value="cat">Cat</label>
+      <label><input type="radio" name="runner" value="pig">Pig</label>
+      <label><input type="radio" name="runner" value="raccoon">Raccoon</label>
     </div>
   </div>
 
-  <div class="track-wrap">
+  <div class="main">
+    <!-- LEFT: SIMPLE TETRIS -->
+    <div class="board-wrap">
+      <div class="board-title">
+        <span>Score: <strong id="score">0</strong> · Lines: <span id="lines">0</span></span>
+        <span>Each full line → your runner dashes.</span>
+      </div>
+      <div id="board"></div>
+      <div class="hint">
+        Controls: ◀ ▶ = move block · ⬇ = fast drop.  
+        Fill a full row to push your animal towards the finish.
+      </div>
+    </div>
+
+    <!-- RIGHT: RACE VISUAL -->
     <div class="track" id="track">
       <div class="sky"></div>
       <div class="mount"></div>
-      <div class="ground" id="ground"></div>
+      <div class="ground"></div>
       <div class="flag"></div>
       <div class="banner" id="banner"></div>
 
@@ -242,14 +330,12 @@
 </div>
 
 <script>
+/************* RACE SETUP *************/
 const track = document.getElementById("track");
-const ground = document.getElementById("ground");
-const statusEl = document.getElementById("status");
-const startBtn = document.getElementById("start");
-const resetBtn = document.getElementById("reset");
 const banner = document.getElementById("banner");
+const statusEl = document.getElementById("status");
 
-const data = [
+const runnersData = [
   {id:"peacock", name:"Babypeacock", img:"Peacock.png", lane:5, scale:1.0},
   {id:"ostrich", name:"Ostrich", img:"Ostrich.png", lane:4, scale:0.95},
   {id:"doge", name:"Doge", img:"Doge.png", lane:3, scale:0.9},
@@ -258,18 +344,17 @@ const data = [
   {id:"raccoon", name:"Raccoon", img:"Raccoon.png", lane:0, scale:0.8}
 ];
 
-let racers = [];
-let started = false;
-let finished = false;
-let animId = null;
+let runners = [];
+let selectedRunnerId = "peacock";
+let raceFinished = false;
 
-function setup(){
-  racers.forEach(r => r.el.remove());
-  racers = [];
+function initRunners(){
+  runners.forEach(r => r.el.remove());
+  runners = [];
   const lanes = Array.from(track.getElementsByClassName("lane"));
   const startX = track.clientWidth * 0.06;
 
-  data.forEach(d => {
+  runnersData.forEach(d => {
     const lane = lanes[d.lane];
     const el = document.createElement("div");
     el.className = "runner" + (d.id === "peacock" ? " peacock" : "");
@@ -285,74 +370,220 @@ function setup(){
     el.style.left = startX + "px";
     el.style.bottom = (parseFloat(lane.style.bottom) - 6) + "px";
     track.appendChild(el);
-    racers.push({id:d.id, name:d.name, el, x:startX, speed:0});
+    runners.push({id:d.id, name:d.name, el, x:startX, progress:0});
   });
 
   banner.style.display = "none";
   banner.classList.remove("ok");
-  statusEl.textContent = "Babypeacock stays on top.";
-  ground.classList.remove("stop");
-  started = false;
-  finished = false;
+  statusEl.textContent = "Choose your runner and start stacking.";
+  raceFinished = false;
 }
+initRunners();
 
-function startRace(){
-  if(started) return;
-  started = true;
-  finished = false;
-  statusEl.textContent = "Everyone runs...";
-  racers.forEach(r => {
-    let base = 1.2 + Math.random() * 0.6;
-    if(r.id === "peacock") base += 0.22;
-    r.speed = base;
-    r.el.classList.add("go");
-  });
-
-  const finishX = track.clientWidth * 0.88;
-
-  function step(){
-    if(finished) return;
-    let win = null;
-    racers.forEach(r => {
-      if(finished) return;
-      const jitter = (Math.random() - 0.5) * 0.25;
-      r.x += r.speed + jitter;
-      if(r.x >= finishX){
-        r.x = finishX;
-        finished = true;
-        win = r;
-      }
-      r.el.style.transform = `translateX(${r.x - track.clientWidth*0.06}px)`;
-    });
-    if(win) showResult(win);
-    else animId = requestAnimationFrame(step);
+document.getElementById("runnerSelect").addEventListener("change", e => {
+  if(e.target.name === "runner"){
+    selectedRunnerId = e.target.value;
   }
-  animId = requestAnimationFrame(step);
+});
+
+function advanceRunner(id, amount){
+  if(raceFinished) return;
+  const finishX = track.clientWidth * 0.88;
+  const r = runners.find(rr => rr.id === id);
+  if(!r) return;
+  r.progress += amount;
+  r.x += amount * (finishX - r.x);
+  if(r.x >= finishX){
+    r.x = finishX;
+    finishRace(r);
+  }
+  r.el.style.transform = `translateX(${r.x - track.clientWidth*0.06}px)`;
+  r.el.classList.add("active");
 }
 
-function showResult(w){
-  racers.forEach(r => r.el.classList.remove("go"));
-  ground.classList.add("stop");
-  const peacockWin = w.id === "peacock";
-  if(peacockWin){
-    banner.textContent = "🦚 Everyone runs — Babypeacock wins.";
+function botAdvance(){
+  if(raceFinished) return;
+  const finishX = track.clientWidth * 0.88;
+  runners.forEach(r => {
+    if(r.id === selectedRunnerId) return; // oyuncu blokla ilerliyor
+    const bonus = (r.id === "peacock") ? 0.004 : 0.002; // Babypeacock hafif güçlü
+    const rand = (Math.random()*0.002);
+    r.progress += bonus + rand;
+    r.x = track.clientWidth*0.06 + r.progress * (finishX - track.clientWidth*0.06);
+    if(r.x >= finishX){
+      r.x = finishX;
+      finishRace(r);
+    }
+    r.el.style.transform = `translateX(${r.x - track.clientWidth*0.06}px)`;
+    r.el.classList.add("active");
+  });
+}
+
+function finishRace(winner){
+  if(raceFinished) return;
+  raceFinished = true;
+  runners.forEach(r => r.el.classList.remove("active"));
+  const playerWin = (winner.id === selectedRunnerId);
+  if(playerWin){
+    banner.textContent = `🦚 ${winner.name} wins with your blocks. Everyone runs — you win.`;
     banner.classList.add("ok");
-    statusEl.textContent = "Babypeacock stays on top.";
+    statusEl.textContent = "Legend. Share the run.";
   }else{
-    banner.textContent = `🏁 ${w.name} first... Babypeacock still wins the story.`;
-    statusEl.textContent = `Winner: ${w.name}. Run again.`;
+    banner.textContent = `🏁 ${winner.name} wins this round. Stack faster & reclaim the lead.`;
+    statusEl.textContent = "Again. Babypeacock never stays behind.";
   }
   banner.style.display = "block";
 }
 
-startBtn.onclick = startRace;
-resetBtn.onclick = () => {
-  cancelAnimationFrame(animId);
-  setup();
-};
+/************* SIMPLE BLOCK GAME *************/
+const rows = 20, cols = 10;
+const boardEl = document.getElementById("board");
+const scoreEl = document.getElementById("score");
+const linesEl = document.getElementById("lines");
 
-window.addEventListener("load", setup);
-window.addEventListener("resize", () => { if(!started) setup(); });
+let board = [];
+let current = null;
+let dropInterval = 500;
+let lastDrop = 0;
+let score = 0;
+let lines = 0;
+
+function createBoard(){
+  board = [];
+  boardEl.innerHTML = "";
+  for(let r=0;r<rows;r++){
+    const row = [];
+    for(let c=0;c<cols;c++){
+      row.push(0);
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.r = r;
+      cell.dataset.c = c;
+      boardEl.appendChild(cell);
+    }
+    board.push(row);
+  }
+}
+createBoard();
+
+function newPiece(){
+  current = {
+    r:0,
+    c:Math.floor(cols/2),
+  };
+  if(board[0][current.c] === 1){
+    // game over (soft): reset everything, keep race
+    board.forEach(row => row.fill(0));
+    updateBoard();
+    score = 0;
+    lines = 0;
+    scoreEl.textContent = score;
+    linesEl.textContent = lines;
+  }
+  updateBoard();
+}
+newPiece();
+
+function updateBoard(){
+  // clear all visual
+  [...boardEl.children].forEach(cell=>{
+    cell.classList.remove("filled","current");
+  });
+  // draw locked blocks
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(board[r][c]===1){
+        const idx = r*cols + c;
+        boardEl.children[idx].classList.add("filled");
+      }
+    }
+  }
+  // draw current
+  if(current){
+    const idx = current.r*cols + current.c;
+    if(boardEl.children[idx])
+      boardEl.children[idx].classList.add("current");
+  }
+}
+
+function step(timestamp){
+  if(!lastDrop) lastDrop = timestamp;
+  if(timestamp - lastDrop > dropInterval){
+    drop();
+    lastDrop = timestamp;
+  }
+  requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+
+function drop(){
+  if(!current) return;
+  if(canMove(current.r+1, current.c)){
+    current.r++;
+  }else{
+    // lock piece
+    board[current.r][current.c] = 1;
+    clearLines();
+    newPiece();
+  }
+  updateBoard();
+  botAdvance(); // her hamlede botlar çok hafif ilerlesin
+}
+
+function canMove(r,c){
+  if(r<0 || r>=rows || c<0 || c>=cols) return false;
+  if(board[r][c]===1) return false;
+  return true;
+}
+
+function move(dx){
+  if(!current || raceFinished) return;
+  const nc = current.c + dx;
+  if(canMove(current.r, nc)){
+    current.c = nc;
+    updateBoard();
+  }
+}
+
+function fastDrop(){
+  if(!current || raceFinished) return;
+  while(canMove(current.r+1,current.c)){
+    current.r++;
+  }
+  drop();
+}
+
+function clearLines(){
+  let cleared = 0;
+  for(let r=rows-1;r>=0;r--){
+    if(board[r].every(v=>v===1)){
+      cleared++;
+      // kaydır
+      for(let rr=r;rr>0;rr--){
+        board[rr] = [...board[rr-1]];
+      }
+      board[0] = Array(cols).fill(0);
+      r++; // aynı satırı tekrar kontrol et
+    }
+  }
+  if(cleared>0){
+    lines += cleared;
+    score += cleared*100;
+    scoreEl.textContent = score;
+    linesEl.textContent = lines;
+    // her satır için oyuncu koşsun
+    const boost = 0.18 * cleared; // ne kadar çok satır, o kadar atak
+    advanceRunner(selectedRunnerId, boost);
+  }
+}
+
+/* Controls */
+document.addEventListener("keydown",e=>{
+  if(raceFinished) return;
+  if(e.key==="ArrowLeft") move(-1);
+  else if(e.key==="ArrowRight") move(1);
+  else if(e.key==="ArrowDown") fastDrop();
+});
 </script>
 </body>
 </html>
