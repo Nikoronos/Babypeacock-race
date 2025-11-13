@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doge Match – Space Orbs</title>
+  <title>Babypeacock – Meteor Match</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
-      background:#04010b;
+      background:#030014;
       color:#fff;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       min-height:100vh;
@@ -53,7 +53,7 @@
     }
     .badge strong{color:#ffce3a;}
 
-    /* DOGE RACE BAR */
+    /* KÖPEK PROGRESS BAR */
     .race-wrap{
       width:100%;
       margin-top:4px;
@@ -111,12 +111,14 @@
       filter:brightness(1.4) contrast(1.2);
     }
 
-    /* MATCH-3 BOARD */
+    /* TAHTA */
     .board-wrap{
       margin-top:6px;
       padding:6px;
       border-radius:16px;
-      background:radial-gradient(circle at 0 0,rgba(255,255,255,.06),transparent 70%);
+      background:
+        radial-gradient(circle at 0 0,rgba(255,255,255,.06),transparent 70%),
+        radial-gradient(circle at 100% 100%,rgba(120,119,198,.15),transparent 70%);
       box-shadow:0 10px 24px rgba(0,0,0,.95);
     }
     .top-row{
@@ -130,7 +132,7 @@
     #score{color:#ffce3a;font-weight:700;}
     #moves{color:#7dffb4;font-weight:700;}
 
-    /* HEDEF BAR (Royal Match tarzı) */
+    /* HEDEFLER */
     .targets{
       margin-bottom:4px;
       font-size:9px;
@@ -173,12 +175,27 @@
       grid-template-rows:repeat(8,1fr);
       gap:2px;
       touch-action:manipulation;
+      background:radial-gradient(circle at 50% 0,rgba(255,255,255,.12),#050014);
+      border-radius:14px;
+      padding:4px;
+    }
+
+    /* Patlama sırasında shake efekti */
+    .board.shake{
+      animation:shake .18s ease-in-out;
+    }
+    @keyframes shake{
+      0%{transform:translate(0,0);}
+      25%{transform:translate(-2px,1px);}
+      50%{transform:translate(2px,-1px);}
+      75%{transform:translate(-1px,1px);}
+      100%{transform:translate(0,0);}
     }
 
     .cell{
       position:relative;
       border-radius:8px;
-      background:radial-gradient(circle at 50% 0,rgba(255,255,255,.06),rgba(3,1,15,1));
+      background:rgba(4,3,18,.9);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -187,26 +204,30 @@
     }
 
     .gem{
-      position:relative;
-      width:70%;
-      height:70%;
-      border-radius:50%;
+      width:80%;
+      height:80%;
+      border-radius:14px;
       box-shadow:0 0 8px rgba(0,0,0,.6);
       transform:scale(1);
       transition:transform .08s, opacity .08s;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:22px;
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
     }
-    /* emoji ikonlar */
-    .gem::before{content:"";}
-    .r::before{content:"🪐";}
-    .g::before{content:"🔋";}
-    .b::before{content:"🛡️";}
-    .y::before{content:"⭐";}
-    .p::before{content:"🌌";}
-    .o::before{content:"☄️";}
+
+    /* 4 renk meteor – PNG’lere göre */
+    .r{ /* kırmızı */
+      background-image:url("meteor_red.png");
+    }
+    .g{ /* mavi-yeşil */
+      background-image:url("meteor_green.png");
+    }
+    .y{ /* sarı */
+      background-image:url("meteor_yellow.png");
+    }
+    .s{ /* gri */
+      background-image:url("meteor_gray.png");
+    }
 
     .cell.selected .gem{
       transform:scale(1.1);
@@ -219,22 +240,23 @@
       to{transform:scale(0);opacity:0;}
     }
 
-    /* PATLAMA EFEKTİ */
+    /* PATLAMA HALKASI */
     .cell.boom::after{
       content:"";
       position:absolute;
       left:50%;
       top:50%;
-      width:140%;
-      height:140%;
+      width:160%;
+      height:160%;
       transform:translate(-50%,-50%) scale(0);
       border-radius:50%;
       pointer-events:none;
       background:radial-gradient(circle,
         rgba(255,255,255,.95) 0,
-        rgba(255,255,255,.7) 25%,
-        rgba(255,255,255,0) 70%);
-      opacity:.8;
+        rgba(255,255,200,.8) 25%,
+        rgba(255,120,0,.35) 45%,
+        rgba(255,255,255,0) 75%);
+      opacity:.9;
       animation:boom .25s ease-out forwards;
     }
     @keyframes boom{
@@ -243,14 +265,6 @@
         opacity:0;
       }
     }
-
-    /* renkler – uzay orbları */
-    .r{background:linear-gradient(145deg,#ff3b3b,#ff9f7b);}
-    .g{background:linear-gradient(145deg,#38ff9c,#1bbf6b);}
-    .b{background:linear-gradient(145deg,#4dd0ff,#216bff);}
-    .y{background:linear-gradient(145deg,#ffe45d,#ffb347);}
-    .p{background:linear-gradient(145deg,#ff8ef2,#c547ff);}
-    .o{background:linear-gradient(145deg,#ffa141,#ff5b2e);}
 
     .hint{
       margin-top:4px;
@@ -293,56 +307,54 @@
 <body>
 <div class="wrap">
   <div class="title">
-    <h1>Doge Match</h1>
-    <span>Royal Match mantığı: uzay taşları + sınırlı hamle.</span>
+    <h1>Babypeacock Meteor Match</h1>
+    <span>Meteorları birleştir, köpeği finishe koştur.</span>
     <div class="badge">
       <span>Babypeacock universe</span>
       <span>·</span>
-      <strong>Space puzzle prototip</strong>
+      <strong>Royal tarz bulmaca</strong>
     </div>
   </div>
 
-  <!-- DOGE PROGRESS -->
+  <!-- KÖPEK İLERLEME ÇUBUĞU -->
   <div class="race-wrap">
     <div class="race-label">
-      <span>Hedef uzay taşlarını topla, Doge hipersürate çıksın.</span>
+      <span>Meteor hedeflerini topla, köpek ileri koşsun.</span>
       <span>İlerleme: <strong id="progressText">0%</strong></span>
     </div>
     <div class="race-bar" id="raceBar">
       <div class="doge-marker" id="dogeMarker">
-        <video id="dogeVideo" src="Doge.mp4" autoplay loop muted playsinline></video>
+        <video src="Doge.mp4" autoplay loop muted playsinline></video>
       </div>
-      <div class="finish-tag">WARP</div>
+      <div class="finish-tag">FINISH</div>
     </div>
   </div>
 
-  <!-- MATCH-3 BOARD -->
+  <!-- TAHTA -->
   <div class="board-wrap">
     <div class="top-row">
       <div>Skor: <span id="score">0</span></div>
       <div>Hamle: <span id="moves">0</span></div>
     </div>
 
-    <!-- Royal Match tarzı hedef paneli -->
     <div class="targets">
-      <span class="targets-title">Hedef uzay taşları:</span>
+      <span class="targets-title">Hedef meteorlar:</span>
       <span class="target-pill">
         <span class="target-dot dot-r"></span>
-        <span id="t_r">0/12</span>
+        <span id="t_r">0/12</span> <!-- kırmızı -->
       </span>
       <span class="target-pill">
         <span class="target-dot dot-y"></span>
-        <span id="t_y">0/8</span>
+        <span id="t_y">0/8</span>  <!-- sarı -->
       </span>
-      <span class="targets-sub">Tüm hedefler bitmeden hamleleri yakma 👽</span>
+      <span class="targets-sub">Her birleşmede patlama + köpek hızlanır 🐕💥</span>
     </div>
 
     <div class="board" id="board"></div>
     <div class="hint">
-      Önce bir orb seç, sonra yanındakiyle yer değiştir.
-      Sadece <strong>yan yana</strong> taşlar değişir ve hamlen mutlaka eşleşme yapmak zorunda.
-      Her patlamada skor <strong>2ⁿ</strong> artar (n = patlayan orb sayısı).
-      Hedefleri tamamla, Doge %100 warp’a çıksın.
+      Bir meteoru seç, yanındakiyle yer değiştir. Sadece <strong>yan yana</strong> taşlar
+      değişir ve hamlen mutlaka eşleşme yapmak zorunda. 3+ meteor birleşince patlama
+      efekti olur ve köpek ilerler.
     </div>
   </div>
 </div>
@@ -353,20 +365,19 @@
 </div>
 
 <script>
-/* ==== Royal Match mantığı + Space teması + Doge ==== */
+/* ==== Meteor Match + köpek progress ==== */
 
 const rows = 8;
 const cols = 8;
-const types = ['r','g','b','y','p','o']; // orb renkleri
+const types = ['r','g','y','s']; // kırmızı, yeşil-mavi, sarı, gri
 
-// Royal Match tarzı: hamle sınırı
 const MAX_MOVES = 25;
 let movesLeft = MAX_MOVES;
 
-// Hedefler (renk: adet)
+// Hedefler: kırmızı + sarı
 const targets = {
-  r: 12, // kırmızı uzay taşı (🪐)
-  y: 8   // sarı yıldız (⭐)
+  r: 12,
+  y: 8
 };
 let collected = { r:0, y:0 };
 
@@ -388,7 +399,7 @@ let board = [];
 let selected = null;
 let animating = false;
 let score = 0;
-let progress = 0; // 0..1
+let progress = 0;
 let gameOver = false;
 
 function init(){
@@ -420,8 +431,7 @@ function init(){
     board.push(row);
   }
 
-  // başlangıç boardunda varsa eşleşmeleri temizle
-  resolveBoard();
+  resolveBoard(); // başlangıçta otomatik 3lü olmasın
 }
 
 function randomType(){
@@ -575,7 +585,7 @@ function handleMatches(matches){
   }
 
   const typeCount = {};
-
+  // patlama + efekt
   matches.forEach(p=>{
     const t = board[p.r][p.c];
     if(!typeCount[t]) typeCount[t] = 0;
@@ -584,6 +594,9 @@ function handleMatches(matches){
     const cell = getCell(p.r,p.c);
     cell.classList.add('pop','boom');
   });
+
+  // shake
+  boardEl.classList.add('shake');
 
   const n = matches.length;
   const gain = Math.pow(2, n);
@@ -597,6 +610,8 @@ function handleMatches(matches){
   updateTargetsUI();
 
   setTimeout(()=>{
+    boardEl.classList.remove('shake');
+
     matches.forEach(p=>{
       board[p.r][p.c] = null;
     });
@@ -626,7 +641,7 @@ function handleMatches(matches){
         showLose();
       }
     }
-  },180);
+  },220);
 }
 
 function updateScore(v){
@@ -656,7 +671,7 @@ function updateTargetsUI(){
   updateProgress(progress);
 
   if(progress >= 1 && !gameOver){
-    showWin("Süper! Tüm uzay taşlarını topladın, Doge warp tünelinde! 🐕🚀");
+    showWin("Süper! Hedef meteorları topladın, köpek finishe vardı 🐕🚀");
   }
 }
 
@@ -670,14 +685,14 @@ function updateProgress(p){
 function showWin(msg){
   if(gameOver) return;
   gameOver = true;
-  overlayText.innerHTML = msg || "<strong>Görev tamam!</strong><br>Uzay orblarını toplayıp Doge’u ışık hızına çıkardın. 🐕🚀";
+  overlayText.innerHTML = msg;
   overlay.style.display = "block";
 }
 
 function showLose(){
   if(gameOver) return;
   gameOver = true;
-  overlayText.innerHTML = "Yakıt bitti komutan 🚨<br>Hamlelerin tükendi ve hedef uzay taşları tamamlanmadı.";
+  overlayText.innerHTML = "Hamleler bitti 😔<br>Meteor hedeflerini tamamlayamadın.";
   overlay.style.display = "block";
 }
 
@@ -686,15 +701,16 @@ function restart(){
 }
 
 function resolveBoard(){
-  // basit: boardu kurup ilk eşleşmeleri otomatik temizlemek için
   let more = findMatches();
-  while(more.length>0){
+  let guard = 0;
+  while(more.length>0 && guard < 50){
     more.forEach(p=>{ board[p.r][p.c] = randomType(); });
     more = findMatches();
+    guard++;
   }
 }
 
-/* Başlangıç */
+/* başlat */
 init();
 </script>
 </body>
