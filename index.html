@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Babypeacock – Meteor Match</title>
+  <title>Babypeacock Meteor Match</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
-      background:#030014;
+      background:#020012;
       color:#fff;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       min-height:100vh;
@@ -30,22 +30,22 @@
       text-align:center;
       display:flex;
       flex-direction:column;
-      gap:4px;
+      gap:6px;
     }
     .title h1{
-      font-size:20px;
-      font-weight:800;
-      letter-spacing:.04em;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:.03em;
     }
     .title span{
-      font-size:10px;
+      font-size:11px;
       opacity:.9;
     }
     .badge{
       margin-top:2px;
-      padding:3px 9px;
+      padding:4px 10px;
       border-radius:999px;
-      background:rgba(0,0,0,.7);
+      background:rgba(0,0,0,.8);
       font-size:9px;
       display:inline-flex;
       gap:5px;
@@ -59,11 +59,11 @@
       margin-top:4px;
     }
     .race-label{
-      font-size:9px;
+      font-size:10px;
       display:flex;
       justify-content:space-between;
       gap:6px;
-      margin-bottom:3px;
+      margin-bottom:4px;
     }
     .race-label span strong{color:#ffce3a;}
     .race-bar{
@@ -73,18 +73,18 @@
       border-radius:20px;
       padding:4px 8px;
       background:
-        radial-gradient(circle at 0 0,rgba(255,255,255,.12),transparent 55%),
+        radial-gradient(circle at 0 0,rgba(255,255,255,.15),transparent 55%),
         linear-gradient(to right,#021723,#273b70,#ff4e4e);
-      box-shadow:0 6px 16px rgba(0,0,0,.9);
+      box-shadow:0 8px 20px rgba(0,0,0,.9);
       overflow:hidden;
     }
     .finish-tag{
       position:absolute;
       right:6px;
       top:6px;
-      padding:2px 6px;
-      border-radius:10px;
-      font-size:8px;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:9px;
       background:rgba(0,0,0,.85);
       border:1px solid #ffce3a;
       color:#ffce3a;
@@ -99,43 +99,39 @@
       align-items:flex-end;
       justify-content:center;
       background:transparent;
-      box-shadow:none;
-      transition:transform .2s ease-out;
+      transition:transform .22s ease-out;
     }
     .doge-marker video{
       height:30px;
       border-radius:999px;
-      background:transparent;
       display:block;
-      mix-blend-mode:screen;
-      filter:brightness(1.4) contrast(1.2);
     }
 
-    /* TAHTA */
+    /* TAHTA KARTI */
     .board-wrap{
-      margin-top:6px;
-      padding:6px;
-      border-radius:16px;
+      margin-top:8px;
+      padding:10px;
+      border-radius:20px;
       background:
-        radial-gradient(circle at 0 0,rgba(255,255,255,.06),transparent 70%),
+        radial-gradient(circle at 0 0,rgba(255,255,255,.08),transparent 70%),
         radial-gradient(circle at 100% 100%,rgba(120,119,198,.15),transparent 70%);
-      box-shadow:0 10px 24px rgba(0,0,0,.95);
+      box-shadow:0 12px 28px rgba(0,0,0,.95);
     }
     .top-row{
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:6px;
-      font-size:9px;
+      font-size:10px;
       margin-bottom:4px;
     }
     #score{color:#ffce3a;font-weight:700;}
     #moves{color:#7dffb4;font-weight:700;}
 
-    /* HEDEFLER */
+    /* HEDEF SATIRI */
     .targets{
       margin-bottom:4px;
-      font-size:9px;
+      font-size:10px;
       display:flex;
       flex-wrap:wrap;
       gap:4px;
@@ -146,22 +142,22 @@
       margin-right:4px;
     }
     .target-pill{
-      padding:2px 6px;
+      padding:2px 7px;
       border-radius:999px;
-      background:rgba(0,0,0,.65);
+      background:rgba(0,0,0,.75);
       display:inline-flex;
       align-items:center;
       gap:4px;
     }
     .target-dot{
-      width:8px;
-      height:8px;
+      width:9px;
+      height:9px;
       border-radius:50%;
     }
     .dot-r{background:#ff3b3b;}
     .dot-y{background:#ffe45d;}
     .targets-sub{
-      font-size:8px;
+      font-size:9px;
       opacity:.7;
       margin-left:auto;
     }
@@ -175,27 +171,27 @@
       grid-template-rows:repeat(8,1fr);
       gap:2px;
       touch-action:manipulation;
-      background:radial-gradient(circle at 50% 0,rgba(255,255,255,.12),#050014);
-      border-radius:14px;
-      padding:4px;
+      background:#050015;
+      border-radius:16px;
+      padding:5px;
     }
 
-    /* Patlama sırasında shake efekti */
+    /* PATLAMA SIRASINDA SHAKE */
     .board.shake{
       animation:shake .18s ease-in-out;
     }
     @keyframes shake{
       0%{transform:translate(0,0);}
-      25%{transform:translate(-2px,1px);}
-      50%{transform:translate(2px,-1px);}
+      25%{transform:translate(-2px,2px);}
+      50%{transform:translate(2px,-2px);}
       75%{transform:translate(-1px,1px);}
       100%{transform:translate(0,0);}
     }
 
     .cell{
       position:relative;
-      border-radius:8px;
-      background:rgba(4,3,18,.9);
+      border-radius:10px;
+      background:#050012; /* DÜZ KOYU – beyaz halka yok */
       display:flex;
       align-items:center;
       justify-content:center;
@@ -204,10 +200,8 @@
     }
 
     .gem{
-      width:80%;
-      height:80%;
-      border-radius:14px;
-      box-shadow:0 0 8px rgba(0,0,0,.6);
+      width:78%;
+      height:78%;
       transform:scale(1);
       transition:transform .08s, opacity .08s;
       background-size:contain;
@@ -215,23 +209,15 @@
       background-repeat:no-repeat;
     }
 
-    /* 4 renk meteor – PNG’lere göre */
-    .r{ /* kırmızı */
-      background-image:url("meteor_red.png");
-    }
-    .g{ /* mavi-yeşil */
-      background-image:url("meteor_green.png");
-    }
-    .y{ /* sarı */
-      background-image:url("meteor_yellow.png");
-    }
-    .s{ /* gri */
-      background-image:url("meteor_gray.png");
-    }
+    /* 4 RENK METEOR – PNG’LERİN ARKA PLANI ZATEN ŞEFFAF */
+    .r{background-image:url("meteor_red.png");}
+    .g{background-image:url("meteor_green.png");}
+    .y{background-image:url("meteor_yellow.png");}
+    .s{background-image:url("meteor_gray.png");}
 
     .cell.selected .gem{
       transform:scale(1.1);
-      box-shadow:0 0 10px rgba(255,255,255,.7);
+      filter:drop-shadow(0 0 8px rgba(255,255,255,.7));
     }
     .cell.pop .gem{
       animation:pop .18s forwards;
@@ -240,35 +226,37 @@
       to{transform:scale(0);opacity:0;}
     }
 
-    /* PATLAMA HALKASI */
+    /* PATLAMA HALKASI – DAHA BÜYÜK VE PARLAK */
     .cell.boom::after{
       content:"";
       position:absolute;
       left:50%;
       top:50%;
-      width:160%;
-      height:160%;
+      width:190%;
+      height:190%;
       transform:translate(-50%,-50%) scale(0);
       border-radius:50%;
       pointer-events:none;
-      background:radial-gradient(circle,
-        rgba(255,255,255,.95) 0,
-        rgba(255,255,200,.8) 25%,
-        rgba(255,120,0,.35) 45%,
-        rgba(255,255,255,0) 75%);
-      opacity:.9;
-      animation:boom .25s ease-out forwards;
+      background:
+        radial-gradient(circle,
+          rgba(255,255,255,.95) 0,
+          rgba(255,255,200,.9) 20%,
+          rgba(255,120,0,.6) 40%,
+          rgba(255,120,0,.15) 60%,
+          rgba(255,255,255,0) 80%);
+      opacity:1;
+      animation:boom .28s ease-out forwards;
     }
     @keyframes boom{
       to{
-        transform:translate(-50%,-50%) scale(1.4);
+        transform:translate(-50%,-50%) scale(1.5);
         opacity:0;
       }
     }
 
     .hint{
-      margin-top:4px;
-      font-size:9px;
+      margin-top:6px;
+      font-size:10px;
       text-align:center;
       opacity:.9;
       max-width:360px;
@@ -281,8 +269,8 @@
       top:50%;
       transform:translate(-50%,-50%);
       background:rgba(0,0,0,.9);
-      padding:10px 16px;
-      border-radius:14px;
+      padding:12px 18px;
+      border-radius:16px;
       font-size:11px;
       line-height:1.5;
       box-shadow:0 0 24px rgba(0,0,0,1);
@@ -292,8 +280,8 @@
     }
     .overlay strong{color:#ffce3a;}
     .btn{
-      margin-top:6px;
-      padding:5px 10px;
+      margin-top:8px;
+      padding:6px 12px;
       border-radius:999px;
       border:none;
       background:#ffce3a;
@@ -316,7 +304,7 @@
     </div>
   </div>
 
-  <!-- KÖPEK İLERLEME ÇUBUĞU -->
+  <!-- KÖPEK PROGRESS BAR -->
   <div class="race-wrap">
     <div class="race-label">
       <span>Meteor hedeflerini topla, köpek ileri koşsun.</span>
@@ -341,20 +329,20 @@
       <span class="targets-title">Hedef meteorlar:</span>
       <span class="target-pill">
         <span class="target-dot dot-r"></span>
-        <span id="t_r">0/12</span> <!-- kırmızı -->
+        <span id="t_r">0/12</span>
       </span>
       <span class="target-pill">
         <span class="target-dot dot-y"></span>
-        <span id="t_y">0/8</span>  <!-- sarı -->
+        <span id="t_y">0/8</span>
       </span>
-      <span class="targets-sub">Her birleşmede patlama + köpek hızlanır 🐕💥</span>
+      <span class="targets-sub">3+ birleşmede patlama + köpek hızlanır 🐕💥</span>
     </div>
 
     <div class="board" id="board"></div>
     <div class="hint">
-      Bir meteoru seç, yanındakiyle yer değiştir. Sadece <strong>yan yana</strong> taşlar
-      değişir ve hamlen mutlaka eşleşme yapmak zorunda. 3+ meteor birleşince patlama
-      efekti olur ve köpek ilerler.
+      Bir meteoru seç, yanındakiyle yer değiştir.<br>
+      Sadece <strong>yan yana</strong> taşlar değişir ve hamlen mutlaka eşleşme
+      yapmak zorunda. 3+ meteor birleşince patlama efekti olur, tahta sallanır ve köpek ilerler.
     </div>
   </div>
 </div>
@@ -369,12 +357,12 @@
 
 const rows = 8;
 const cols = 8;
-const types = ['r','g','y','s']; // kırmızı, yeşil-mavi, sarı, gri
+const types = ['r','g','y','s']; // kırmızı, mavi-yeşil, sarı, gri
 
 const MAX_MOVES = 25;
 let movesLeft = MAX_MOVES;
 
-// Hedefler: kırmızı + sarı
+// Hedef: kırmızı + sarı
 const targets = {
   r: 12,
   y: 8
@@ -431,7 +419,7 @@ function init(){
     board.push(row);
   }
 
-  resolveBoard(); // başlangıçta otomatik 3lü olmasın
+  resolveBoard();  // başlangıçta otomatik 3lü olmasın
 }
 
 function randomType(){
@@ -585,7 +573,6 @@ function handleMatches(matches){
   }
 
   const typeCount = {};
-  // patlama + efekt
   matches.forEach(p=>{
     const t = board[p.r][p.c];
     if(!typeCount[t]) typeCount[t] = 0;
@@ -595,7 +582,7 @@ function handleMatches(matches){
     cell.classList.add('pop','boom');
   });
 
-  // shake
+  // Tahta shake
   boardEl.classList.add('shake');
 
   const n = matches.length;
@@ -616,6 +603,7 @@ function handleMatches(matches){
       board[p.r][p.c] = null;
     });
 
+    // Yukarıdan doldur
     for(let c=0;c<cols;c++){
       let writeRow = rows - 1;
       for(let r=rows-1;r>=0;r--){
@@ -641,7 +629,7 @@ function handleMatches(matches){
         showLose();
       }
     }
-  },220);
+  },260);
 }
 
 function updateScore(v){
@@ -692,7 +680,8 @@ function showWin(msg){
 function showLose(){
   if(gameOver) return;
   gameOver = true;
-  overlayText.innerHTML = "Hamleler bitti 😔<br>Meteor hedeflerini tamamlayamadın.";
+  overlayText.innerHTML =
+    "Hamleler bitti 😔<br>Meteor hedeflerini tamamlayamadın.";
   overlay.style.display = "block";
 }
 
@@ -710,7 +699,7 @@ function resolveBoard(){
   }
 }
 
-/* başlat */
+/* BAŞLAT */
 init();
 </script>
 </body>
