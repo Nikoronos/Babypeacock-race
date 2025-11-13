@@ -98,15 +98,18 @@
       display:flex;
       align-items:flex-end;
       justify-content:center;
-      background:transparent; /* siyah kutu yok */
+      background:transparent;
       box-shadow:none;
       transition:transform .2s ease-out;
     }
     .doge-marker video{
       height:30px;
-      border-radius:8px;
+      border-radius:999px;
       background:transparent;
       display:block;
+      /* siyah fonu yumuşatmak için */
+      mix-blend-mode:screen;
+      filter:brightness(1.4) contrast(1.2);
     }
 
     /* MATCH-3 BOARD */
@@ -147,6 +150,7 @@
       align-items:center;
       justify-content:center;
       cursor:pointer;
+      overflow:hidden;
     }
 
     .gem{
@@ -166,6 +170,31 @@
     }
     @keyframes pop{
       to{transform:scale(0);opacity:0;}
+    }
+
+    /* PATLAMA (mevye efekti) */
+    .cell.boom::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:140%;
+      height:140%;
+      transform:translate(-50%,-50%) scale(0);
+      border-radius:50%;
+      pointer-events:none;
+      background:radial-gradient(circle,
+        rgba(255,255,255,.95) 0,
+        rgba(255,255,255,.7) 25%,
+        rgba(255,255,255,0) 70%);
+      opacity:.8;
+      animation:boom .25s ease-out forwards;
+    }
+    @keyframes boom{
+      to{
+        transform:translate(-50%,-50%) scale(1.4);
+        opacity:0;
+      }
     }
 
     /* renkler */
@@ -459,10 +488,10 @@ function handleMatches(matches){
     return;
   }
 
-  // patlama animasyonu
+  // patlama + pop animasyonu
   matches.forEach(p=>{
     const cell = getCell(p.r,p.c);
-    cell.classList.add('pop');
+    cell.classList.add('pop','boom');
   });
 
   // PUAN: 2^n, n = patlayan taş sayısı (tek hamlede)
