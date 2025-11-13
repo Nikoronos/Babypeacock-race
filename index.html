@@ -178,7 +178,7 @@
 
     /* PATLAMA SIRASINDA SHAKE */
     .board.shake{
-      animation:shake .2s ease-in-out;
+      animation:shake .18s ease-in-out;
     }
     @keyframes shake{
       0%{transform:translate(0,0);}
@@ -191,7 +191,7 @@
     .cell{
       position:relative;
       border-radius:10px;
-      background:#050012; /* düz koyu; ekstra beyaz yok */
+      background:#050012; /* DÜZ KOYU – beyaz halka yok */
       display:flex;
       align-items:center;
       justify-content:center;
@@ -209,7 +209,7 @@
       background-repeat:no-repeat;
     }
 
-    /* 4 RENK METEOR – PNG’lerin arkası şeffaf olmalı */
+    /* 4 RENK METEOR – PNG’LERİN ARKA PLANI ZATEN ŞEFFAF */
     .r{background-image:url("meteor_red.png");}
     .g{background-image:url("meteor_green.png");}
     .y{background-image:url("meteor_yellow.png");}
@@ -226,7 +226,7 @@
       to{transform:scale(0);opacity:0;}
     }
 
-    /* PATLAMA HALKASI – BÜYÜK VE PARLAK */
+    /* PATLAMA HALKASI – DAHA BÜYÜK VE PARLAK */
     .cell.boom::after{
       content:"";
       position:absolute;
@@ -245,11 +245,11 @@
           rgba(255,120,0,.15) 60%,
           rgba(255,255,255,0) 80%);
       opacity:1;
-      animation:boom .35s ease-out forwards;
+      animation:boom .28s ease-out forwards;
     }
     @keyframes boom{
       to{
-        transform:translate(-50%,-50%) scale(1.6);
+        transform:translate(-50%,-50%) scale(1.5);
         opacity:0;
       }
     }
@@ -340,8 +340,9 @@
 
     <div class="board" id="board"></div>
     <div class="hint">
-      Bir meteora basılı tut, parmağını <strong>yanındaki meteora sürükleyip bırak</strong>.<br>
-      3+ meteor birleşince patlama efekti olur, tahta sallanır ve köpek ilerler.
+      Bir meteoru seç, yanındakiyle yer değiştir.<br>
+      Sadece <strong>yan yana</strong> taşlar değişir ve hamlen mutlaka eşleşme
+      yapmak zorunda. 3+ meteor birleşince patlama efekti olur, tahta sallanır ve köpek ilerler.
     </div>
   </div>
 </div>
@@ -352,7 +353,7 @@
 </div>
 
 <script>
-/* ==== Meteor Match + köpek progress – drag & drop ==== */
+/* ==== Meteor Match + köpek progress ==== */
 
 const rows = 8;
 const cols = 8;
@@ -383,7 +384,7 @@ const targetEls = {
 };
 
 let board = [];
-let dragStart = null;
+let selected = null;
 let animating = false;
 let score = 0;
 let progress = 0;
@@ -396,7 +397,7 @@ function init(){
   progress = 0;
   movesLeft = MAX_MOVES;
   gameOver = false;
-  dragStart = null;
+  selected = null;
   animating = false;
 
   collected.r = 0;
@@ -418,7 +419,7 @@ function init(){
     board.push(row);
   }
 
-  resolveBoard();
+  resolveBoard();  // başlangıçta otomatik 3lü olmasın
 }
 
 function randomType(){
@@ -435,44 +436,38 @@ function createCell(r,c,t){
   gem.className = 'gem ' + t;
   cell.appendChild(gem);
 
-  // DRAG BAŞLANGIÇ
-  cell.addEventListener('pointerdown', e=>{
-    if(animating || gameOver) return;
-    dragStart = {r,c};
-    cell.classList.add('selected');
-  });
-
-  // DRAG BİTİŞ
-  cell.addEventListener('pointerup', e=>{
-    if(animating || gameOver) return;
-    if(!dragStart) return;
-
-    const start = dragStart;
-    dragStart = null;
-    const startCell = getCell(start.r,start.c);
-    startCell.classList.remove('selected');
-
-    const endR = r;
-    const endC = c;
-
-    // Aynı hücreye bırakıldıysa swap yok
-    if(start.r === endR && start.c === endC) return;
-
-    const manhattan = Math.abs(start.r - endR) + Math.abs(start.c - endC);
-    if(manhattan !== 1) return; // sadece komşuya izin
-
-    swapAndCheck(start.r,start.c,endR,endC);
-  });
-
-  cell.addEventListener('pointercancel', ()=>{
-    if(dragStart){
-      const startCell = getCell(dragStart.r,dragStart.c);
-      startCell.classList.remove('selected');
-      dragStart = null;
-    }
-  });
-
+  cell.addEventListener('pointerdown', ()=>onCellTap(r,c));
   return cell;
+}
+
+function onCellTap(r,c){
+  if(animating || gameOver) return;
+  const cell = getCell(r,c);
+
+  if(!selected){
+    selected = {r,c};
+    cell.classList.add('selected');
+  }else{
+    const same = (selected.r === r && selected.c === c);
+    if(same){
+      cell.classList.remove('selected');
+      selected = null;
+      return;
+    }
+    const isNeighbor =
+      (Math.abs(selected.r - r) + Math.abs(selected.c - c) === 1);
+
+    if(!isNeighbor){
+      getCell(selected.r,selected.c).classList.remove('selected');
+      selected = {r,c};
+      cell.classList.add('selected');
+      return;
+    }
+
+    swapAndCheck(selected.r,selected.c,r,c);
+    getCell(selected.r,selected.c).classList.remove('selected');
+    selected = null;
+  }
 }
 
 function getCell(r,c){
@@ -634,7 +629,7 @@ function handleMatches(matches){
         showLose();
       }
     }
-  },350);
+  },260);
 }
 
 function updateScore(v){
