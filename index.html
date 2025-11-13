@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doge Match – Space Run</title>
+  <title>Doge Match – Space Orbs</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
@@ -74,7 +74,7 @@
       padding:4px 8px;
       background:
         radial-gradient(circle at 0 0,rgba(255,255,255,.12),transparent 55%),
-        linear-gradient(to right,#2a0044,#4b178b,#ff4e4e);
+        linear-gradient(to right,#021723,#273b70,#ff4e4e);
       box-shadow:0 6px 16px rgba(0,0,0,.9);
       overflow:hidden;
     }
@@ -107,7 +107,6 @@
       border-radius:999px;
       background:transparent;
       display:block;
-      /* siyah fonu yumuşatmak için */
       mix-blend-mode:screen;
       filter:brightness(1.4) contrast(1.2);
     }
@@ -131,6 +130,40 @@
     #score{color:#ffce3a;font-weight:700;}
     #moves{color:#7dffb4;font-weight:700;}
 
+    /* HEDEF BAR (Royal Match tarzı) */
+    .targets{
+      margin-bottom:4px;
+      font-size:9px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+      align-items:center;
+    }
+    .targets-title{
+      opacity:.9;
+      margin-right:4px;
+    }
+    .target-pill{
+      padding:2px 6px;
+      border-radius:999px;
+      background:rgba(0,0,0,.65);
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .target-dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+    }
+    .dot-r{background:#ff3b3b;}
+    .dot-y{background:#ffe45d;}
+    .targets-sub{
+      font-size:8px;
+      opacity:.7;
+      margin-left:auto;
+    }
+
     .board{
       width:100%;
       max-width:360px;
@@ -145,7 +178,7 @@
     .cell{
       position:relative;
       border-radius:8px;
-      background:rgba(4,3,18,.98);
+      background:radial-gradient(circle at 50% 0,rgba(255,255,255,.06),rgba(3,1,15,1));
       display:flex;
       align-items:center;
       justify-content:center;
@@ -154,13 +187,27 @@
     }
 
     .gem{
+      position:relative;
       width:70%;
       height:70%;
       border-radius:50%;
       box-shadow:0 0 8px rgba(0,0,0,.6);
       transform:scale(1);
       transition:transform .08s, opacity .08s;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
     }
+    /* emoji ikonlar */
+    .gem::before{content:"";}
+    .r::before{content:"🪐";}
+    .g::before{content:"🔋";}
+    .b::before{content:"🛡️";}
+    .y::before{content:"⭐";}
+    .p::before{content:"🌌";}
+    .o::before{content:"☄️";}
+
     .cell.selected .gem{
       transform:scale(1.1);
       box-shadow:0 0 10px rgba(255,255,255,.7);
@@ -172,7 +219,7 @@
       to{transform:scale(0);opacity:0;}
     }
 
-    /* PATLAMA (mevye efekti) */
+    /* PATLAMA EFEKTİ */
     .cell.boom::after{
       content:"";
       position:absolute;
@@ -197,7 +244,7 @@
       }
     }
 
-    /* renkler */
+    /* renkler – uzay orbları */
     .r{background:linear-gradient(145deg,#ff3b3b,#ff9f7b);}
     .g{background:linear-gradient(145deg,#38ff9c,#1bbf6b);}
     .b{background:linear-gradient(145deg,#4dd0ff,#216bff);}
@@ -247,26 +294,25 @@
 <div class="wrap">
   <div class="title">
     <h1>Doge Match</h1>
-    <span>Candy tarzı uzay tahtası. 3’lü eşleştir, Doge’u finish’e taşı.</span>
+    <span>Royal Match mantığı: uzay taşları + sınırlı hamle.</span>
     <div class="badge">
       <span>Babypeacock universe</span>
       <span>·</span>
-      <strong>Mobile first</strong>
+      <strong>Space puzzle prototip</strong>
     </div>
   </div>
 
   <!-- DOGE PROGRESS -->
   <div class="race-wrap">
     <div class="race-label">
-      <span>3 aynı meyve → patlar, Doge ilerler.</span>
+      <span>Hedef uzay taşlarını topla, Doge hipersürate çıksın.</span>
       <span>İlerleme: <strong id="progressText">0%</strong></span>
     </div>
     <div class="race-bar" id="raceBar">
       <div class="doge-marker" id="dogeMarker">
-        <!-- Doge mp4 animasyonu -->
         <video id="dogeVideo" src="Doge.mp4" autoplay loop muted playsinline></video>
       </div>
-      <div class="finish-tag">FINISH</div>
+      <div class="finish-tag">WARP</div>
     </div>
   </div>
 
@@ -274,14 +320,29 @@
   <div class="board-wrap">
     <div class="top-row">
       <div>Skor: <span id="score">0</span></div>
-      <div>Hamle: <span id="moves">∞</span></div>
+      <div>Hamle: <span id="moves">0</span></div>
     </div>
+
+    <!-- Royal Match tarzı hedef paneli -->
+    <div class="targets">
+      <span class="targets-title">Hedef uzay taşları:</span>
+      <span class="target-pill">
+        <span class="target-dot dot-r"></span>
+        <span id="t_r">0/12</span>
+      </span>
+      <span class="target-pill">
+        <span class="target-dot dot-y"></span>
+        <span id="t_y">0/8</span>
+      </span>
+      <span class="targets-sub">Tüm hedefler bitmeden hamleleri yakma 👽</span>
+    </div>
+
     <div class="board" id="board"></div>
     <div class="hint">
-      Tahtaya dokun: önce bir taşı seç, sonra yanındakiyle yer değiştir.
-      Sadece <strong>yan yana</strong> taşlar değişir ve hamlen maç oluşturmalı.
-      Her patlamada skor <strong>2ⁿ</strong> artar (n = patlayan taş sayısı) ve Doge ilerler.
-      %100 olunca Doge finishe ulaşır.
+      Önce bir orb seç, sonra yanındakiyle yer değiştir.
+      Sadece <strong>yan yana</strong> taşlar değişir ve hamlen mutlaka eşleşme yapmak zorunda.
+      Her patlamada skor <strong>2ⁿ</strong> artar (n = patlayan orb sayısı).
+      Hedefleri tamamla, Doge %100 warp’a çıksın.
     </div>
   </div>
 </div>
@@ -292,34 +353,60 @@
 </div>
 
 <script>
-/* ==== Match-3 + Doge Progress (Mobil) ==== */
+/* ==== Royal Match mantığı + Space teması + Doge ==== */
 
 const rows = 8;
 const cols = 8;
-const types = ['r','g','b','y','p','o']; // renkler
+const types = ['r','g','b','y','p','o']; // orb renkleri
+
+// Royal Match tarzı: hamle sınırı
+const MAX_MOVES = 25;
+let movesLeft = MAX_MOVES;
+
+// Hedefler (renk: adet)
+const targets = {
+  r: 12, // kırmızı uzay taşı (🪐)
+  y: 8   // sarı yıldız (⭐)
+};
+let collected = { r:0, y:0 };
+
 const boardEl = document.getElementById('board');
 const scoreEl = document.getElementById('score');
+const movesEl = document.getElementById('moves');
 const overlay = document.getElementById('overlay');
 const overlayText = document.getElementById('overlayText');
 const dogeMarker = document.getElementById('dogeMarker');
 const raceBar = document.getElementById('raceBar');
 const progressText = document.getElementById('progressText');
 
+const targetEls = {
+  r: document.getElementById('t_r'),
+  y: document.getElementById('t_y')
+};
+
 let board = [];
 let selected = null;
 let animating = false;
 let score = 0;
 let progress = 0; // 0..1
+let gameOver = false;
 
 function init(){
   board = [];
   boardEl.innerHTML = '';
   score = 0;
   progress = 0;
-  updateScore(0);
-  updateProgress(0);
+  movesLeft = MAX_MOVES;
+  gameOver = false;
   selected = null;
   animating = false;
+
+  collected.r = 0;
+  collected.y = 0;
+
+  updateScore(0);
+  updateMoves();
+  updateTargetsUI();
   overlay.style.display = "none";
 
   for(let r=0;r<rows;r++){
@@ -333,7 +420,7 @@ function init(){
     board.push(row);
   }
 
-  // başlangıçta varsa otomatik eşleşmeleri temizle
+  // başlangıç boardunda varsa eşleşmeleri temizle
   resolveBoard();
 }
 
@@ -356,7 +443,7 @@ function createCell(r,c,t){
 }
 
 function onCellTap(r,c){
-  if(animating) return;
+  if(animating || gameOver) return;
   const cell = getCell(r,c);
 
   if(!selected){
@@ -373,14 +460,12 @@ function onCellTap(r,c){
       (Math.abs(selected.r - r) + Math.abs(selected.c - c) === 1);
 
     if(!isNeighbor){
-      // eskiyi kaldır, yeni seç
       getCell(selected.r,selected.c).classList.remove('selected');
       selected = {r,c};
       cell.classList.add('selected');
       return;
     }
 
-    // komşu -> swap dene
     swapAndCheck(selected.r,selected.c,r,c);
     getCell(selected.r,selected.c).classList.remove('selected');
     selected = null;
@@ -417,13 +502,15 @@ function swapAndCheck(r1,c1,r2,c2){
 
   const matches = findMatches();
   if(matches.length === 0){
-    // geçersiz hamle, geri al
     setTimeout(()=>{
       swapTypes(r1,c1,r2,c2);
       refreshVisual();
       animating = false;
     },120);
   }else{
+    movesLeft--;
+    if(movesLeft<0) movesLeft = 0;
+    updateMoves();
     handleMatches(matches);
   }
 }
@@ -469,7 +556,6 @@ function findMatches(){
     }
   }
 
-  // unique
   const seen = new Set();
   const unique = [];
   for(const p of toClear){
@@ -488,27 +574,33 @@ function handleMatches(matches){
     return;
   }
 
-  // patlama + pop animasyonu
+  const typeCount = {};
+
   matches.forEach(p=>{
+    const t = board[p.r][p.c];
+    if(!typeCount[t]) typeCount[t] = 0;
+    typeCount[t]++;
+
     const cell = getCell(p.r,p.c);
     cell.classList.add('pop','boom');
   });
 
-  // PUAN: 2^n, n = patlayan taş sayısı (tek hamlede)
   const n = matches.length;
   const gain = Math.pow(2, n);
   updateScore(score + gain);
 
-  // Doge ilerlemesi
-  advanceProgress(n);
+  for(const t in typeCount){
+    if(targets[t] != null){
+      collected[t] += typeCount[t];
+    }
+  }
+  updateTargetsUI();
 
   setTimeout(()=>{
-    // tahtadan sil
     matches.forEach(p=>{
       board[p.r][p.c] = null;
     });
 
-    // sütun sütun aşağı kaydır (gravity)
     for(let c=0;c<cols;c++){
       let writeRow = rows - 1;
       for(let r=rows-1;r>=0;r--){
@@ -518,7 +610,6 @@ function handleMatches(matches){
           writeRow--;
         }
       }
-      // yukarıyı yeni taşla doldur
       for(let r=writeRow;r>=0;r--){
         board[r][c] = randomType();
       }
@@ -526,26 +617,16 @@ function handleMatches(matches){
 
     refreshVisual();
 
-    // zincirleme eşleşme varsa devam
     const more = findMatches();
     if(more.length>0){
       handleMatches(more);
     }else{
       animating = false;
+      if(!gameOver && movesLeft<=0 && progress<1){
+        showLose();
+      }
     }
   },180);
-}
-
-function advanceProgress(clearedCount){
-  if(progress >= 1) return;
-  // her taş için küçük adım: ayarlayabilirsin
-  const stepPerTile = 0.01; 
-  progress += clearedCount * stepPerTile;
-  if(progress > 1) progress = 1;
-  updateProgress(progress);
-  if(progress >= 1){
-    showWin();
-  }
 }
 
 function updateScore(v){
@@ -553,15 +634,50 @@ function updateScore(v){
   scoreEl.textContent = score;
 }
 
+function updateMoves(){
+  movesEl.textContent = movesLeft;
+}
+
+function updateTargetsUI(){
+  let totalNeeded = 0;
+  let totalDone = 0;
+
+  for(const key in targets){
+    totalNeeded += targets[key];
+    const done = Math.min(collected[key], targets[key]);
+    totalDone += done;
+
+    if(targetEls[key]){
+      targetEls[key].textContent = done + "/" + targets[key];
+    }
+  }
+
+  progress = totalNeeded ? totalDone / totalNeeded : 0;
+  updateProgress(progress);
+
+  if(progress >= 1 && !gameOver){
+    showWin("Süper! Tüm uzay taşlarını topladın, Doge warp tünelinde! 🐕🚀");
+  }
+}
+
 function updateProgress(p){
   const percent = Math.round(p * 100);
   progressText.textContent = percent + "%";
-  const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 26; // finish mesafesi
+  const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 26;
   dogeMarker.style.transform = `translateX(${maxMove * p}px)`;
 }
 
-function showWin(){
-  overlayText.innerHTML = "<strong>Doge FINISH!</strong><br>Meyve patlata patlata yarışı kazandın. 🐕🚀";
+function showWin(msg){
+  if(gameOver) return;
+  gameOver = true;
+  overlayText.innerHTML = msg || "<strong>Görev tamam!</strong><br>Uzay orblarını toplayıp Doge’u ışık hızına çıkardın. 🐕🚀";
+  overlay.style.display = "block";
+}
+
+function showLose(){
+  if(gameOver) return;
+  gameOver = true;
+  overlayText.innerHTML = "Yakıt bitti komutan 🚨<br>Hamlelerin tükendi ve hedef uzay taşları tamamlanmadı.";
   overlay.style.display = "block";
 }
 
@@ -569,7 +685,16 @@ function restart(){
   init();
 }
 
-/* Başlangıç: otomatik board kur */
+function resolveBoard(){
+  // basit: boardu kurup ilk eşleşmeleri otomatik temizlemek için
+  let more = findMatches();
+  while(more.length>0){
+    more.forEach(p=>{ board[p.r][p.c] = randomType(); });
+    more = findMatches();
+  }
+}
+
+/* Başlangıç */
 init();
 </script>
 </body>
