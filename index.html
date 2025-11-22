@@ -2,8 +2,8 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Babypeacock Meteor Match</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Babypeacock Meteor Match - Swipe Sürümü</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
@@ -13,8 +13,9 @@
       min-height:100vh;
       display:flex;
       justify-content:center;
-      align-items:flex-start;
+      align-items:flex-start; /* Üstten başlasın */
       padding:10px;
+      overscroll-behavior: none; /* Mobil refresh engelleme */
     }
     .wrap{
       width:100%;
@@ -33,7 +34,7 @@
       gap:6px;
     }
     .title h1{
-      font-size:24px;
+      font-size:22px;
       font-weight:900;
       letter-spacing:.03em;
     }
@@ -100,6 +101,7 @@
       justify-content:center;
       background:transparent;
       transition:transform .22s ease-out;
+      z-index: 2;
     }
     .doge-marker video{
       height:30px;
@@ -162,6 +164,7 @@
       margin-left:auto;
     }
 
+    /* OYUN ALANI */
     .board{
       width:100%;
       max-width:360px;
@@ -170,10 +173,12 @@
       grid-template-columns:repeat(8,1fr);
       grid-template-rows:repeat(8,1fr);
       gap:2px;
-      touch-action:manipulation;
+      /* Mobilde sürüklerken sayfa kaymasın diye: */
+      touch-action: none; 
       background:#050015;
       border-radius:16px;
       padding:5px;
+      user-select: none;
     }
 
     /* PATLAMA SIRASINDA SHAKE */
@@ -191,65 +196,74 @@
     .cell{
       position:relative;
       border-radius:10px;
-      background:#050012; /* DÜZ KOYU – beyaz halka yok */
+      background:#050012; 
       display:flex;
       align-items:center;
       justify-content:center;
       cursor:pointer;
-      overflow:hidden;
+      overflow:hidden; /* Patlama dışarı taşmasın derseniz hidden, taşsın derseniz visible */
     }
 
     .gem{
-      width:78%;
-      height:78%;
+      width:80%;
+      height:80%;
       transform:scale(1);
       transition:transform .08s, opacity .08s;
       background-size:contain;
       background-position:center;
       background-repeat:no-repeat;
+      pointer-events: none; /* Tıklamalar cell'e gitsin */
     }
 
-    /* 4 RENK METEOR – PNG’LERİN ARKA PLANI ZATEN ŞEFFAF */
+    /* RESIMLER */
     .r{background-image:url("meteor_red.png");}
     .g{background-image:url("meteor_green.png");}
     .y{background-image:url("meteor_yellow.png");}
     .s{background-image:url("meteor_gray.png");}
 
     .cell.selected .gem{
-      transform:scale(1.1);
+      transform:scale(1.15);
       filter:drop-shadow(0 0 8px rgba(255,255,255,.7));
     }
+    
+    /* Patlama animasyonu */
     .cell.pop .gem{
-      animation:pop .18s forwards;
+      animation:pop .2s forwards;
     }
     @keyframes pop{
-      to{transform:scale(0);opacity:0;}
+      to{transform:scale(1.5);opacity:0;}
     }
 
-    /* PATLAMA HALKASI – DAHA BÜYÜK VE PARLAK */
+    /* BOOM HALKASI */
     .cell.boom::after{
       content:"";
       position:absolute;
       left:50%;
       top:50%;
-      width:190%;
-      height:190%;
-      transform:translate(-50%,-50%) scale(0);
+      width:10px;
+      height:10px;
+      transform:translate(-50%,-50%);
       border-radius:50%;
       pointer-events:none;
-      background:
-        radial-gradient(circle,
-          rgba(255,255,255,.95) 0,
-          rgba(255,255,200,.9) 20%,
-          rgba(255,120,0,.6) 40%,
-          rgba(255,120,0,.15) 60%,
-          rgba(255,255,255,0) 80%);
-      opacity:1;
-      animation:boom .28s ease-out forwards;
+      background: radial-gradient(circle, #fff 0%, #ffce3a 40%, transparent 80%);
+      opacity:0;
+      z-index: 10;
     }
-    @keyframes boom{
-      to{
-        transform:translate(-50%,-50%) scale(1.5);
+    /* 3+ Eşleşince tetiklenen CSS class */
+    .cell.boom.explode::after {
+       animation: explosion .4s ease-out forwards;
+    }
+
+    @keyframes explosion{
+      0% {
+        transform:translate(-50%,-50%) scale(0.5);
+        opacity:1;
+      }
+      50% {
+        opacity: 0.8;
+      }
+      100%{
+        transform:translate(-50%,-50%) scale(6);
         opacity:0;
       }
     }
@@ -268,26 +282,27 @@
       left:50%;
       top:50%;
       transform:translate(-50%,-50%);
-      background:rgba(0,0,0,.9);
-      padding:12px 18px;
+      background:rgba(0,0,0,.95);
+      padding:16px 24px;
       border-radius:16px;
-      font-size:11px;
+      font-size:12px;
       line-height:1.5;
-      box-shadow:0 0 24px rgba(0,0,0,1);
+      box-shadow:0 0 30px rgba(255,206,58,0.2);
       display:none;
       text-align:center;
       z-index:50;
+      border: 1px solid #333;
     }
     .overlay strong{color:#ffce3a;}
     .btn{
-      margin-top:8px;
-      padding:6px 12px;
+      margin-top:12px;
+      padding:8px 16px;
       border-radius:999px;
       border:none;
       background:#ffce3a;
       color:#000;
-      font-size:10px;
-      font-weight:600;
+      font-size:11px;
+      font-weight:700;
       cursor:pointer;
     }
   </style>
@@ -296,18 +311,17 @@
 <div class="wrap">
   <div class="title">
     <h1>Babypeacock Meteor Match</h1>
-    <span>Meteorları birleştir, köpeği finishe koştur.</span>
+    <span>Sürükle, patlat, köpeği finişe ulaştır.</span>
     <div class="badge">
       <span>Babypeacock universe</span>
       <span>·</span>
-      <strong>Royal tarz bulmaca</strong>
+      <strong>Swipe Modu</strong>
     </div>
   </div>
 
-  <!-- KÖPEK PROGRESS BAR -->
   <div class="race-wrap">
     <div class="race-label">
-      <span>Meteor hedeflerini topla, köpek ileri koşsun.</span>
+      <span>Meteor hedeflerini topla, köpek koşsun.</span>
       <span>İlerleme: <strong id="progressText">0%</strong></span>
     </div>
     <div class="race-bar" id="raceBar">
@@ -318,7 +332,6 @@
     </div>
   </div>
 
-  <!-- TAHTA -->
   <div class="board-wrap">
     <div class="top-row">
       <div>Skor: <span id="score">0</span></div>
@@ -326,7 +339,7 @@
     </div>
 
     <div class="targets">
-      <span class="targets-title">Hedef meteorlar:</span>
+      <span class="targets-title">Hedef:</span>
       <span class="target-pill">
         <span class="target-dot dot-r"></span>
         <span id="t_r">0/12</span>
@@ -335,14 +348,12 @@
         <span class="target-dot dot-y"></span>
         <span id="t_y">0/8</span>
       </span>
-      <span class="targets-sub">3+ birleşmede patlama + köpek hızlanır 🐕💥</span>
+      <span class="targets-sub">3+ Patlama 💥</span>
     </div>
 
     <div class="board" id="board"></div>
     <div class="hint">
-      Bir meteoru seç, yanındakiyle yer değiştir.<br>
-      Sadece <strong>yan yana</strong> taşlar değişir ve hamlen mutlaka eşleşme
-      yapmak zorunda. 3+ meteor birleşince patlama efekti olur, tahta sallanır ve köpek ilerler.
+      Meteorları <strong>sürükleyerek</strong> yer değiştir. En az 3 aynı renk yan yana gelmeli.
     </div>
   </div>
 </div>
@@ -353,16 +364,16 @@
 </div>
 
 <script>
-/* ==== Meteor Match + köpek progress ==== */
+/* ==== Meteor Match - Swipe Logic ==== */
 
 const rows = 8;
 const cols = 8;
-const types = ['r','g','y','s']; // kırmızı, mavi-yeşil, sarı, gri
+const types = ['r','g','y','s']; // kırmızı, yeşil, sarı, gri
 
 const MAX_MOVES = 25;
 let movesLeft = MAX_MOVES;
 
-// Hedef: kırmızı + sarı
+// Hedefler
 const targets = {
   r: 12,
   y: 8
@@ -384,11 +395,17 @@ const targetEls = {
 };
 
 let board = [];
-let selected = null;
+let selected = null; 
 let animating = false;
 let score = 0;
 let progress = 0;
 let gameOver = false;
+
+// Sürükleme değişkenleri
+let startX = 0;
+let startY = 0;
+let startRow = null;
+let startCol = null;
 
 function init(){
   board = [];
@@ -419,7 +436,7 @@ function init(){
     board.push(row);
   }
 
-  resolveBoard();  // başlangıçta otomatik 3lü olmasın
+  resolveBoard();  // Başlangıçta hazır eşleşme olmasın
 }
 
 function randomType(){
@@ -436,39 +453,100 @@ function createCell(r,c,t){
   gem.className = 'gem ' + t;
   cell.appendChild(gem);
 
-  cell.addEventListener('pointerdown', ()=>onCellTap(r,c));
+  // Pointer events for Touch & Mouse Drag
+  cell.addEventListener('pointerdown', handleInputStart);
+  cell.addEventListener('pointerup', handleInputEnd);
+  // Mouse alan dışına çıkarsa diye önlem (isteğe bağlı)
+  cell.addEventListener('pointerleave', (e) => {
+     // Sürükleme başladıysa ve hücreden çıktıysa hemen swipe'ı tamamlamaya çalışabiliriz
+     // Ancak pointerup genellikle yeterlidir. Basitlik için pointerup kullanıyoruz.
+  });
+
   return cell;
 }
 
-function onCellTap(r,c){
+/* ==== SÜRÜKLEME (DRAG / SWIPE) MANTIĞI ==== */
+
+function handleInputStart(e) {
   if(animating || gameOver) return;
-  const cell = getCell(r,c);
+  // Varsayılan sürüklemeyi engelle (resim sürüklenmesin)
+  e.preventDefault();
 
-  if(!selected){
-    selected = {r,c};
-    cell.classList.add('selected');
-  }else{
-    const same = (selected.r === r && selected.c === c);
-    if(same){
-      cell.classList.remove('selected');
-      selected = null;
-      return;
-    }
-    const isNeighbor =
-      (Math.abs(selected.r - r) + Math.abs(selected.c - c) === 1);
+  // Başlangıç koordinatları
+  startX = e.clientX;
+  startY = e.clientY;
+  
+  // Hangi hücrede başladık
+  startRow = parseInt(e.currentTarget.dataset.r);
+  startCol = parseInt(e.currentTarget.dataset.c);
 
-    if(!isNeighbor){
-      getCell(selected.r,selected.c).classList.remove('selected');
-      selected = {r,c};
-      cell.classList.add('selected');
-      return;
-    }
-
-    swapAndCheck(selected.r,selected.c,r,c);
-    getCell(selected.r,selected.c).classList.remove('selected');
-    selected = null;
+  // Görsel seçim efekti (Tıklama modu için de geçerli)
+  // Eski seçimi temizle
+  if(selected) {
+     getCell(selected.r, selected.c).classList.remove('selected');
   }
+  selected = {r: startRow, c: startCol};
+  e.currentTarget.classList.add('selected');
 }
+
+function handleInputEnd(e) {
+  if(animating || gameOver || startRow === null) return;
+
+  const endX = e.clientX;
+  const endY = e.clientY;
+  
+  const diffX = endX - startX;
+  const diffY = endY - startY;
+
+  // Sürükleme hassasiyeti (piksel)
+  const threshold = 20;
+
+  // Eğer hareket çok küçükse -> Tıklama (Tap) olarak kabul et
+  if(Math.abs(diffX) < threshold && Math.abs(diffY) < threshold) {
+     // Burası sadece tıklama ile oynayanlar için. 
+     // İkinci bir taşa tıklandıysa handleTapLogic çağrılabilir.
+     // Şu anki yapıda sadece seçili bırakıyoruz, yanına tıklarsa o zaman işlem yapabiliriz.
+     // Ancak biz SWIPE odaklıyız, o yüzden drag olmadıysa bir şey yapma.
+     return; 
+  }
+
+  // Yeterince büyük hareket var, yönü bulalım
+  let targetRow = startRow;
+  let targetCol = startCol;
+
+  if(Math.abs(diffX) > Math.abs(diffY)) {
+    // Yatay hareket
+    if(diffX > 0) targetCol++; // Sağ
+    else targetCol--;          // Sol
+  } else {
+    // Dikey hareket
+    if(diffY > 0) targetRow++; // Aşağı
+    else targetRow--;          // Yukarı
+  }
+
+  // Tahta sınırları içinde mi?
+  if(targetRow >= 0 && targetRow < rows && targetCol >= 0 && targetCol < cols) {
+    // Seçimi temizle
+    if(selected) {
+      getCell(selected.r, selected.c).classList.remove('selected');
+      selected = null;
+    }
+    swapAndCheck(startRow, startCol, targetRow, targetCol);
+  } else {
+    // Sınır dışı hamle, seçimi bırak
+    if(selected) {
+      getCell(selected.r, selected.c).classList.remove('selected');
+      selected = null;
+    }
+  }
+
+  // Reset
+  startRow = null;
+  startCol = null;
+}
+
+/* Eski tıklama mantığını da desteklemek isterseniz bu fonksiyonu pointerup içinde 'threshold altındaysa' çağırabilirsiniz. 
+   Şimdilik sadece swipe ile devam ediyoruz, kullanıcı deneyimi daha akıcı olur. */
 
 function getCell(r,c){
   return boardEl.children[r*cols + c];
@@ -484,27 +562,38 @@ function refreshVisual(){
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
       const cell = getCell(r,c);
-      cell.className = 'cell';
-      const gem = cell.firstChild;
+      // classList ile oynamak yerine temizliyoruz ama 'boom' efektleri kaybolabilir.
+      // Sadece gem'i güncelleyelim:
+      const gem = cell.querySelector('.gem');
       gem.className = 'gem ' + board[r][c];
       gem.style.opacity = 1;
       gem.style.transform = 'scale(1)';
+      
+      // Cell üzerindeki animasyon classlarını temizle
+      cell.classList.remove('pop', 'boom', 'explode'); 
     }
   }
 }
 
 function swapAndCheck(r1,c1,r2,c2){
   animating = true;
+  
+  // Görsel olarak swap yapmadan önce veri değişimi
   swapTypes(r1,c1,r2,c2);
+  
+  // Basit bir CSS transform ile değişim animasyonu yapılabilir ama
+  // burada hızlıca refreshVisual kullanıyoruz, match-3 standardı.
   refreshVisual();
 
   const matches = findMatches();
   if(matches.length === 0){
+    // Eşleşme yok, geri al
     setTimeout(()=>{
       swapTypes(r1,c1,r2,c2);
       refreshVisual();
       animating = false;
-    },120);
+      // Hatalı hamle efekti eklenebilir (titreme vb)
+    }, 200);
   }else{
     movesLeft--;
     if(movesLeft<0) movesLeft = 0;
@@ -516,7 +605,7 @@ function swapAndCheck(r1,c1,r2,c2){
 function findMatches(){
   const toClear = [];
 
-  // yatay
+  // Yatay
   for(let r=0;r<rows;r++){
     let count = 1;
     for(let c=1;c<=cols;c++){
@@ -535,7 +624,7 @@ function findMatches(){
     }
   }
 
-  // dikey
+  // Dikey
   for(let c=0;c<cols;c++){
     let count = 1;
     for(let r=1;r<=rows;r++){
@@ -554,6 +643,7 @@ function findMatches(){
     }
   }
 
+  // Tekrar edenleri temizle
   const seen = new Set();
   const unique = [];
   for(const p of toClear){
@@ -579,14 +669,17 @@ function handleMatches(matches){
     typeCount[t]++;
 
     const cell = getCell(p.r,p.c);
-    cell.classList.add('pop','boom');
+    // Patlama classları
+    cell.classList.add('pop', 'boom', 'explode');
   });
 
-  // Tahta shake
+  // Tahta titret
   boardEl.classList.add('shake');
 
+  // Puan hesapla
   const n = matches.length;
-  const gain = Math.pow(2, n);
+  // Biraz daha tatmin edici puanlama
+  const gain = n * 10 + (n > 3 ? (n-3)*20 : 0); 
   updateScore(score + gain);
 
   for(const t in typeCount){
@@ -596,14 +689,15 @@ function handleMatches(matches){
   }
   updateTargetsUI();
 
+  // Animasyon süresi kadar bekle
   setTimeout(()=>{
     boardEl.classList.remove('shake');
 
     matches.forEach(p=>{
-      board[p.r][p.c] = null;
+      board[p.r][p.c] = null; // Boşalt
     });
 
-    // Yukarıdan doldur
+    // Yukarıdan taş düşürme
     for(let c=0;c<cols;c++){
       let writeRow = rows - 1;
       for(let r=rows-1;r>=0;r--){
@@ -618,18 +712,20 @@ function handleMatches(matches){
       }
     }
 
-    refreshVisual();
+    refreshVisual(); // Yeni durumu çiz
 
+    // Zincirleme reaksiyon kontrolü
     const more = findMatches();
     if(more.length>0){
-      handleMatches(more);
+      // Biraz bekle sonra zincirleme patlat
+      setTimeout(() => handleMatches(more), 250);
     }else{
       animating = false;
       if(!gameOver && movesLeft<=0 && progress<1){
         showLose();
       }
     }
-  },260);
+  }, 400); // Patlama animasyonu bitiş süresi
 }
 
 function updateScore(v){
@@ -659,15 +755,22 @@ function updateTargetsUI(){
   updateProgress(progress);
 
   if(progress >= 1 && !gameOver){
-    showWin("Süper! Hedef meteorları topladın, köpek finishe vardı 🐕🚀");
+    // Kazanma durumunda biraz bekle, son patlama görünsün
+    setTimeout(() => {
+       showWin("Harika! Hedefler tamam, köpek finişi geçti! 🐕🚀");
+    }, 500);
   }
 }
 
 function updateProgress(p){
   const percent = Math.round(p * 100);
   progressText.textContent = percent + "%";
-  const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 26;
-  dogeMarker.style.transform = `translateX(${maxMove * p}px)`;
+  // Marker hareketi
+  // raceBar genişliği - köpek genişliği - padding
+  if(raceBar && dogeMarker){
+      const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 20;
+      dogeMarker.style.transform = `translateX(${maxMove * p}px)`;
+  }
 }
 
 function showWin(msg){
@@ -697,6 +800,7 @@ function resolveBoard(){
     more = findMatches();
     guard++;
   }
+  refreshVisual();
 }
 
 /* BAŞLAT */
