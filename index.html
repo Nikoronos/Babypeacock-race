@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Babypeacock Meteor Match - Swipe Sürümü</title>
+  <title>Babypeacock Meteor Match - Fire & Sparks</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
@@ -13,9 +13,9 @@
       min-height:100vh;
       display:flex;
       justify-content:center;
-      align-items:flex-start; /* Üstten başlasın */
+      align-items:flex-start;
       padding:10px;
-      overscroll-behavior: none; /* Mobil refresh engelleme */
+      overscroll-behavior: none; 
     }
     .wrap{
       width:100%;
@@ -173,7 +173,6 @@
       grid-template-columns:repeat(8,1fr);
       grid-template-rows:repeat(8,1fr);
       gap:2px;
-      /* Mobilde sürüklerken sayfa kaymasın diye: */
       touch-action: none; 
       background:#050015;
       border-radius:16px;
@@ -181,7 +180,7 @@
       user-select: none;
     }
 
-    /* PATLAMA SIRASINDA SHAKE */
+    /* TİTREME EFEKTİ */
     .board.shake{
       animation:shake .18s ease-in-out;
     }
@@ -201,7 +200,8 @@
       align-items:center;
       justify-content:center;
       cursor:pointer;
-      overflow:hidden; /* Patlama dışarı taşmasın derseniz hidden, taşsın derseniz visible */
+      overflow:visible; /* Kıvılcımlar dışarı taşsın diye visible yaptık */
+      z-index: 1;
     }
 
     .gem{
@@ -212,7 +212,9 @@
       background-size:contain;
       background-position:center;
       background-repeat:no-repeat;
-      pointer-events: none; /* Tıklamalar cell'e gitsin */
+      pointer-events: none;
+      position: relative;
+      z-index: 5; /* Taş patlamanın altında kalmasın */
     }
 
     /* RESIMLER */
@@ -226,45 +228,98 @@
       filter:drop-shadow(0 0 8px rgba(255,255,255,.7));
     }
     
-    /* Patlama animasyonu */
+    /* Taşın kaybolma animasyonu */
     .cell.pop .gem{
       animation:pop .2s forwards;
     }
     @keyframes pop{
-      to{transform:scale(1.5);opacity:0;}
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.8; filter: brightness(2); }
+      100% { transform: scale(0); opacity: 0; }
     }
 
-    /* BOOM HALKASI */
+    /* ==== YENİ ATEŞ VE KIVILCIM EFEKTLERİ ==== */
+
+    /* 1. ATEŞ TOPU (Fireball) - ::after */
     .cell.boom::after{
       content:"";
       position:absolute;
       left:50%;
       top:50%;
-      width:10px;
-      height:10px;
-      transform:translate(-50%,-50%);
+      width:100%;
+      height:100%;
+      transform:translate(-50%,-50%) scale(0);
       border-radius:50%;
       pointer-events:none;
-      background: radial-gradient(circle, #fff 0%, #ffce3a 40%, transparent 80%);
+      /* Merkez beyaz, sonra sarı, dışı kırmızı-turuncu */
+      background: radial-gradient(circle, #ffffcc 0%, #ffeb3b 30%, #ff5722 60%, transparent 70%);
       opacity:0;
       z-index: 10;
-    }
-    /* 3+ Eşleşince tetiklenen CSS class */
-    .cell.boom.explode::after {
-       animation: explosion .4s ease-out forwards;
+      mix-blend-mode: screen; /* Parlaklık efekti */
     }
 
-    @keyframes explosion{
+    .cell.boom.explode::after {
+       animation: fireball .4s ease-out forwards;
+    }
+
+    @keyframes fireball{
       0% {
-        transform:translate(-50%,-50%) scale(0.5);
+        transform:translate(-50%,-50%) scale(0.2);
         opacity:1;
       }
-      50% {
-        opacity: 0.8;
+      40% {
+        transform:translate(-50%,-50%) scale(1.5);
+        opacity: 1;
       }
       100%{
-        transform:translate(-50%,-50%) scale(6);
+        transform:translate(-50%,-50%) scale(2.0);
         opacity:0;
+      }
+    }
+
+    /* 2. KIVILCIMLAR (Sparks) - ::before */
+    /* Box-shadow kullanarak tek bir elementle çoklu parçacık yapıyoruz */
+    .cell.boom::before{
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 11;
+      box-shadow: 
+        0 0 0 #fff; /* Başlangıçta hepsi merkezde */
+    }
+
+    .cell.boom.explode::before {
+      animation: sparks .45s ease-out forwards;
+    }
+
+    @keyframes sparks {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 
+          0 0 0 #ffeb3b, 0 0 0 #ff5722, 
+          0 0 0 #ffeb3b, 0 0 0 #ff5722, 
+          0 0 0 #ffeb3b, 0 0 0 #ff5722, 
+          0 0 0 #ffeb3b, 0 0 0 #ff5722;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1);
+        /* Kıvılcımlar dışarı doğru saçılıyor */
+        box-shadow: 
+          0 -30px 0 #ffeb3b,    /* Yukarı */
+          25px -25px 0 #ff5722, /* Sağ Üst */
+          30px 0 0 #ffeb3b,     /* Sağ */
+          25px 25px 0 #ff5722,  /* Sağ Alt */
+          0 30px 0 #ffeb3b,     /* Aşağı */
+          -25px 25px 0 #ff5722, /* Sol Alt */
+          -30px 0 0 #ffeb3b,    /* Sol */
+          -25px -25px 0 #ff5722;/* Sol Üst */
       }
     }
 
@@ -290,7 +345,7 @@
       box-shadow:0 0 30px rgba(255,206,58,0.2);
       display:none;
       text-align:center;
-      z-index:50;
+      z-index: 50;
       border: 1px solid #333;
     }
     .overlay strong{color:#ffce3a;}
@@ -315,7 +370,7 @@
     <div class="badge">
       <span>Babypeacock universe</span>
       <span>·</span>
-      <strong>Swipe Modu</strong>
+      <strong>Ateş Efekti 🔥</strong>
     </div>
   </div>
 
@@ -348,12 +403,12 @@
         <span class="target-dot dot-y"></span>
         <span id="t_y">0/8</span>
       </span>
-      <span class="targets-sub">3+ Patlama 💥</span>
+      <span class="targets-sub">3+ Ateşli Patlama 🔥</span>
     </div>
 
     <div class="board" id="board"></div>
     <div class="hint">
-      Meteorları <strong>sürükleyerek</strong> yer değiştir. En az 3 aynı renk yan yana gelmeli.
+      Meteorları <strong>sürükleyerek</strong> (swipe) eşleştir. <br>Büyük patlamalar için kombo yap!
     </div>
   </div>
 </div>
@@ -364,20 +419,16 @@
 </div>
 
 <script>
-/* ==== Meteor Match - Swipe Logic ==== */
+/* ==== Meteor Match - Swipe + Fire Effect Logic ==== */
 
 const rows = 8;
 const cols = 8;
-const types = ['r','g','y','s']; // kırmızı, yeşil, sarı, gri
+const types = ['r','g','y','s']; 
 
 const MAX_MOVES = 25;
 let movesLeft = MAX_MOVES;
 
-// Hedefler
-const targets = {
-  r: 12,
-  y: 8
-};
+const targets = { r: 12, y: 8 };
 let collected = { r:0, y:0 };
 
 const boardEl = document.getElementById('board');
@@ -401,7 +452,7 @@ let score = 0;
 let progress = 0;
 let gameOver = false;
 
-// Sürükleme değişkenleri
+// Swipe değişkenleri
 let startX = 0;
 let startY = 0;
 let startRow = null;
@@ -436,7 +487,7 @@ function init(){
     board.push(row);
   }
 
-  resolveBoard();  // Başlangıçta hazır eşleşme olmasın
+  resolveBoard(); 
 }
 
 function randomType(){
@@ -453,35 +504,21 @@ function createCell(r,c,t){
   gem.className = 'gem ' + t;
   cell.appendChild(gem);
 
-  // Pointer events for Touch & Mouse Drag
   cell.addEventListener('pointerdown', handleInputStart);
   cell.addEventListener('pointerup', handleInputEnd);
-  // Mouse alan dışına çıkarsa diye önlem (isteğe bağlı)
-  cell.addEventListener('pointerleave', (e) => {
-     // Sürükleme başladıysa ve hücreden çıktıysa hemen swipe'ı tamamlamaya çalışabiliriz
-     // Ancak pointerup genellikle yeterlidir. Basitlik için pointerup kullanıyoruz.
-  });
 
   return cell;
 }
 
-/* ==== SÜRÜKLEME (DRAG / SWIPE) MANTIĞI ==== */
-
+/* ==== SWIPE MANTIĞI ==== */
 function handleInputStart(e) {
   if(animating || gameOver) return;
-  // Varsayılan sürüklemeyi engelle (resim sürüklenmesin)
   e.preventDefault();
-
-  // Başlangıç koordinatları
   startX = e.clientX;
   startY = e.clientY;
-  
-  // Hangi hücrede başladık
   startRow = parseInt(e.currentTarget.dataset.r);
   startCol = parseInt(e.currentTarget.dataset.c);
 
-  // Görsel seçim efekti (Tıklama modu için de geçerli)
-  // Eski seçimi temizle
   if(selected) {
      getCell(selected.r, selected.c).classList.remove('selected');
   }
@@ -494,59 +531,40 @@ function handleInputEnd(e) {
 
   const endX = e.clientX;
   const endY = e.clientY;
-  
   const diffX = endX - startX;
   const diffY = endY - startY;
+  const threshold = 20; 
 
-  // Sürükleme hassasiyeti (piksel)
-  const threshold = 20;
-
-  // Eğer hareket çok küçükse -> Tıklama (Tap) olarak kabul et
   if(Math.abs(diffX) < threshold && Math.abs(diffY) < threshold) {
-     // Burası sadece tıklama ile oynayanlar için. 
-     // İkinci bir taşa tıklandıysa handleTapLogic çağrılabilir.
-     // Şu anki yapıda sadece seçili bırakıyoruz, yanına tıklarsa o zaman işlem yapabiliriz.
-     // Ancak biz SWIPE odaklıyız, o yüzden drag olmadıysa bir şey yapma.
      return; 
   }
 
-  // Yeterince büyük hareket var, yönü bulalım
   let targetRow = startRow;
   let targetCol = startCol;
 
   if(Math.abs(diffX) > Math.abs(diffY)) {
-    // Yatay hareket
-    if(diffX > 0) targetCol++; // Sağ
-    else targetCol--;          // Sol
+    if(diffX > 0) targetCol++; 
+    else targetCol--;          
   } else {
-    // Dikey hareket
-    if(diffY > 0) targetRow++; // Aşağı
-    else targetRow--;          // Yukarı
+    if(diffY > 0) targetRow++; 
+    else targetRow--;          
   }
 
-  // Tahta sınırları içinde mi?
   if(targetRow >= 0 && targetRow < rows && targetCol >= 0 && targetCol < cols) {
-    // Seçimi temizle
     if(selected) {
       getCell(selected.r, selected.c).classList.remove('selected');
       selected = null;
     }
     swapAndCheck(startRow, startCol, targetRow, targetCol);
   } else {
-    // Sınır dışı hamle, seçimi bırak
     if(selected) {
       getCell(selected.r, selected.c).classList.remove('selected');
       selected = null;
     }
   }
-
-  // Reset
   startRow = null;
   startCol = null;
 }
-
-/* Eski tıklama mantığını da desteklemek isterseniz bu fonksiyonu pointerup içinde 'threshold altındaysa' çağırabilirsiniz. 
-   Şimdilik sadece swipe ile devam ediyoruz, kullanıcı deneyimi daha akıcı olur. */
 
 function getCell(r,c){
   return boardEl.children[r*cols + c];
@@ -562,14 +580,14 @@ function refreshVisual(){
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
       const cell = getCell(r,c);
-      // classList ile oynamak yerine temizliyoruz ama 'boom' efektleri kaybolabilir.
-      // Sadece gem'i güncelleyelim:
       const gem = cell.querySelector('.gem');
       gem.className = 'gem ' + board[r][c];
       gem.style.opacity = 1;
       gem.style.transform = 'scale(1)';
+      gem.style.filter = 'none';
       
-      // Cell üzerindeki animasyon classlarını temizle
+      // Animasyon classlarını temizle ama animasyonun bitmesini beklemek daha iyi olurdu
+      // Hızlı oynanış için burada temizliyoruz, CSS animasyonları pointer-events:none olduğu için sorun değil
       cell.classList.remove('pop', 'boom', 'explode'); 
     }
   }
@@ -577,22 +595,15 @@ function refreshVisual(){
 
 function swapAndCheck(r1,c1,r2,c2){
   animating = true;
-  
-  // Görsel olarak swap yapmadan önce veri değişimi
   swapTypes(r1,c1,r2,c2);
-  
-  // Basit bir CSS transform ile değişim animasyonu yapılabilir ama
-  // burada hızlıca refreshVisual kullanıyoruz, match-3 standardı.
   refreshVisual();
 
   const matches = findMatches();
   if(matches.length === 0){
-    // Eşleşme yok, geri al
     setTimeout(()=>{
       swapTypes(r1,c1,r2,c2);
       refreshVisual();
       animating = false;
-      // Hatalı hamle efekti eklenebilir (titreme vb)
     }, 200);
   }else{
     movesLeft--;
@@ -604,7 +615,6 @@ function swapAndCheck(r1,c1,r2,c2){
 
 function findMatches(){
   const toClear = [];
-
   // Yatay
   for(let r=0;r<rows;r++){
     let count = 1;
@@ -615,15 +625,12 @@ function findMatches(){
         count++;
       }else{
         if(count>=3){
-          for(let k=0;k<count;k++){
-            toClear.push({r, c:c-1-k});
-          }
+          for(let k=0;k<count;k++) toClear.push({r, c:c-1-k});
         }
         count = 1;
       }
     }
   }
-
   // Dikey
   for(let c=0;c<cols;c++){
     let count = 1;
@@ -634,16 +641,12 @@ function findMatches(){
         count++;
       }else{
         if(count>=3){
-          for(let k=0;k<count;k++){
-            toClear.push({r:r-1-k, c});
-          }
+          for(let k=0;k<count;k++) toClear.push({r:r-1-k, c});
         }
         count = 1;
       }
     }
   }
-
-  // Tekrar edenleri temizle
   const seen = new Set();
   const unique = [];
   for(const p of toClear){
@@ -669,16 +672,13 @@ function handleMatches(matches){
     typeCount[t]++;
 
     const cell = getCell(p.r,p.c);
-    // Patlama classları
+    // Patlama tetikle
     cell.classList.add('pop', 'boom', 'explode');
   });
 
-  // Tahta titret
   boardEl.classList.add('shake');
 
-  // Puan hesapla
   const n = matches.length;
-  // Biraz daha tatmin edici puanlama
   const gain = n * 10 + (n > 3 ? (n-3)*20 : 0); 
   updateScore(score + gain);
 
@@ -689,15 +689,11 @@ function handleMatches(matches){
   }
   updateTargetsUI();
 
-  // Animasyon süresi kadar bekle
   setTimeout(()=>{
     boardEl.classList.remove('shake');
+    matches.forEach(p=>{ board[p.r][p.c] = null; });
 
-    matches.forEach(p=>{
-      board[p.r][p.c] = null; // Boşalt
-    });
-
-    // Yukarıdan taş düşürme
+    // Düşürme
     for(let c=0;c<cols;c++){
       let writeRow = rows - 1;
       for(let r=rows-1;r>=0;r--){
@@ -712,12 +708,10 @@ function handleMatches(matches){
       }
     }
 
-    refreshVisual(); // Yeni durumu çiz
+    refreshVisual();
 
-    // Zincirleme reaksiyon kontrolü
     const more = findMatches();
     if(more.length>0){
-      // Biraz bekle sonra zincirleme patlat
       setTimeout(() => handleMatches(more), 250);
     }else{
       animating = false;
@@ -725,7 +719,7 @@ function handleMatches(matches){
         showLose();
       }
     }
-  }, 400); // Patlama animasyonu bitiş süresi
+  }, 450); 
 }
 
 function updateScore(v){
@@ -740,33 +734,25 @@ function updateMoves(){
 function updateTargetsUI(){
   let totalNeeded = 0;
   let totalDone = 0;
-
   for(const key in targets){
     totalNeeded += targets[key];
     const done = Math.min(collected[key], targets[key]);
     totalDone += done;
-
-    if(targetEls[key]){
-      targetEls[key].textContent = done + "/" + targets[key];
-    }
+    if(targetEls[key]) targetEls[key].textContent = done + "/" + targets[key];
   }
-
   progress = totalNeeded ? totalDone / totalNeeded : 0;
   updateProgress(progress);
 
   if(progress >= 1 && !gameOver){
-    // Kazanma durumunda biraz bekle, son patlama görünsün
     setTimeout(() => {
-       showWin("Harika! Hedefler tamam, köpek finişi geçti! 🐕🚀");
-    }, 500);
+       showWin("Harika! Hedefler tamam, ateşli bitiş! 🔥🐕");
+    }, 600);
   }
 }
 
 function updateProgress(p){
   const percent = Math.round(p * 100);
   progressText.textContent = percent + "%";
-  // Marker hareketi
-  // raceBar genişliği - köpek genişliği - padding
   if(raceBar && dogeMarker){
       const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 20;
       dogeMarker.style.transform = `translateX(${maxMove * p}px)`;
@@ -783,8 +769,7 @@ function showWin(msg){
 function showLose(){
   if(gameOver) return;
   gameOver = true;
-  overlayText.innerHTML =
-    "Hamleler bitti 😔<br>Meteor hedeflerini tamamlayamadın.";
+  overlayText.innerHTML = "Hamleler bitti 😔";
   overlay.style.display = "block";
 }
 
@@ -803,7 +788,6 @@ function resolveBoard(){
   refreshVisual();
 }
 
-/* BAŞLAT */
 init();
 </script>
 </body>
