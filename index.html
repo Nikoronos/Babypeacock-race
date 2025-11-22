@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Babypeacock Meteor Match - Fire & Sparks</title>
+  <title>Babypeacock Meteor Match - Hard Mode</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
@@ -37,6 +37,7 @@
       font-size:22px;
       font-weight:900;
       letter-spacing:.03em;
+      text-shadow: 0 0 15px rgba(255, 78, 78, 0.6);
     }
     .title span{
       font-size:11px;
@@ -51,8 +52,9 @@
       display:inline-flex;
       gap:5px;
       align-items:center;
+      border: 1px solid #333;
     }
-    .badge strong{color:#ffce3a;}
+    .badge strong{color:#ff5722;}
 
     /* KÖPEK PROGRESS BAR */
     .race-wrap{
@@ -128,7 +130,7 @@
       margin-bottom:4px;
     }
     #score{color:#ffce3a;font-weight:700;}
-    #moves{color:#7dffb4;font-weight:700;}
+    #moves{color:#ff4e4e;font-weight:700;} /* Zorluk vurgusu için kırmızı */
 
     /* HEDEF SATIRI */
     .targets{
@@ -158,12 +160,7 @@
     }
     .dot-r{background:#ff3b3b;}
     .dot-y{background:#ffe45d;}
-    .targets-sub{
-      font-size:9px;
-      opacity:.7;
-      margin-left:auto;
-    }
-
+    
     /* OYUN ALANI */
     .board{
       width:100%;
@@ -172,49 +169,61 @@
       display:grid;
       grid-template-columns:repeat(8,1fr);
       grid-template-rows:repeat(8,1fr);
-      gap:2px;
+      gap:2px; /* Taşlar arası çok hafif boşluk */
       touch-action: none; 
-      background:#050015;
+      background:transparent; /* Board arka planı da şeffaf olsun, uzay hissi */
       border-radius:16px;
       padding:5px;
       user-select: none;
+      position: relative;
+    }
+    /* Tahtanın arkasına hafif bir derinlik verelim ama kareler olmasın */
+    .board::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        z-index: 0;
     }
 
     /* TİTREME EFEKTİ */
     .board.shake{
-      animation:shake .18s ease-in-out;
+      animation:shake .2s ease-in-out;
     }
     @keyframes shake{
       0%{transform:translate(0,0);}
-      25%{transform:translate(-2px,2px);}
-      50%{transform:translate(2px,-2px);}
-      75%{transform:translate(-1px,1px);}
+      20%{transform:translate(-3px,3px);}
+      40%{transform:translate(3px,-3px);}
+      60%{transform:translate(-2px,2px);}
+      80%{transform:translate(1px,-1px);}
       100%{transform:translate(0,0);}
     }
 
     .cell{
       position:relative;
       border-radius:10px;
-      background:#050012; 
+      background:transparent; /* İSTEK: ARKA PLAN YOK EDİLDİ */
       display:flex;
       align-items:center;
       justify-content:center;
       cursor:pointer;
-      overflow:visible; /* Kıvılcımlar dışarı taşsın diye visible yaptık */
+      overflow:visible; 
       z-index: 1;
     }
 
     .gem{
-      width:80%;
-      height:80%;
+      width:85%; /* Taşları biraz büyüttük çünkü kareler gitti */
+      height:85%;
       transform:scale(1);
-      transition:transform .08s, opacity .08s;
+      transition:transform .1s, opacity .1s;
       background-size:contain;
       background-position:center;
       background-repeat:no-repeat;
       pointer-events: none;
       position: relative;
-      z-index: 5; /* Taş patlamanın altında kalmasın */
+      z-index: 5;
+      filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5)); /* Taşlara derinlik */
     }
 
     /* RESIMLER */
@@ -224,77 +233,74 @@
     .s{background-image:url("meteor_gray.png");}
 
     .cell.selected .gem{
-      transform:scale(1.15);
-      filter:drop-shadow(0 0 8px rgba(255,255,255,.7));
+      transform:scale(1.2);
+      filter:drop-shadow(0 0 10px rgba(255,255,255,.8));
     }
     
     /* Taşın kaybolma animasyonu */
     .cell.pop .gem{
-      animation:pop .2s forwards;
+      animation:pop .15s forwards;
     }
     @keyframes pop{
       0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.8; filter: brightness(2); }
       100% { transform: scale(0); opacity: 0; }
     }
 
-    /* ==== YENİ ATEŞ VE KIVILCIM EFEKTLERİ ==== */
+    /* ==== GÜÇLENDİRİLMİŞ ATEŞ EFEKTLERİ ==== */
 
-    /* 1. ATEŞ TOPU (Fireball) - ::after */
+    /* 1. ATEŞ TOPU (Fireball) - Daha büyük ve parlak */
     .cell.boom::after{
       content:"";
       position:absolute;
       left:50%;
       top:50%;
-      width:100%;
-      height:100%;
+      width:120%; /* Hücreden daha büyük */
+      height:120%;
       transform:translate(-50%,-50%) scale(0);
       border-radius:50%;
       pointer-events:none;
-      /* Merkez beyaz, sonra sarı, dışı kırmızı-turuncu */
-      background: radial-gradient(circle, #ffffcc 0%, #ffeb3b 30%, #ff5722 60%, transparent 70%);
+      /* Daha agresif renkler */
+      background: radial-gradient(circle, #ffffff 10%, #fff176 30%, #ff3d00 60%, transparent 70%);
       opacity:0;
       z-index: 10;
-      mix-blend-mode: screen; /* Parlaklık efekti */
+      mix-blend-mode: screen; 
     }
 
     .cell.boom.explode::after {
-       animation: fireball .4s ease-out forwards;
+       animation: fireball .5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     @keyframes fireball{
       0% {
-        transform:translate(-50%,-50%) scale(0.2);
+        transform:translate(-50%,-50%) scale(0.5);
         opacity:1;
       }
-      40% {
-        transform:translate(-50%,-50%) scale(1.5);
+      30% {
+        transform:translate(-50%,-50%) scale(2.5); /* Daha büyük patlama */
         opacity: 1;
       }
       100%{
-        transform:translate(-50%,-50%) scale(2.0);
+        transform:translate(-50%,-50%) scale(3.0);
         opacity:0;
       }
     }
 
-    /* 2. KIVILCIMLAR (Sparks) - ::before */
-    /* Box-shadow kullanarak tek bir elementle çoklu parçacık yapıyoruz */
+    /* 2. KIVILCIMLAR (Sparks) - Daha uzağa saçılan */
     .cell.boom::before{
       content: "";
       position: absolute;
       top: 50%; left: 50%;
-      width: 4px; height: 4px;
+      width: 5px; height: 5px;
       border-radius: 50%;
       transform: translate(-50%, -50%);
       opacity: 0;
       pointer-events: none;
       z-index: 11;
-      box-shadow: 
-        0 0 0 #fff; /* Başlangıçta hepsi merkezde */
+      box-shadow: 0 0 0 #fff;
     }
 
     .cell.boom.explode::before {
-      animation: sparks .45s ease-out forwards;
+      animation: sparks .6s ease-out forwards;
     }
 
     @keyframes sparks {
@@ -302,24 +308,24 @@
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
         box-shadow: 
-          0 0 0 #ffeb3b, 0 0 0 #ff5722, 
-          0 0 0 #ffeb3b, 0 0 0 #ff5722, 
-          0 0 0 #ffeb3b, 0 0 0 #ff5722, 
-          0 0 0 #ffeb3b, 0 0 0 #ff5722;
+          0 0 0 #fff176, 0 0 0 #ff3d00, 
+          0 0 0 #fff176, 0 0 0 #ff3d00, 
+          0 0 0 #fff176, 0 0 0 #ff3d00, 
+          0 0 0 #fff176, 0 0 0 #ff3d00;
       }
       100% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(1);
-        /* Kıvılcımlar dışarı doğru saçılıyor */
+        transform: translate(-50%, -50%) scale(0.5);
+        /* Çok daha geniş alana yayılma */
         box-shadow: 
-          0 -30px 0 #ffeb3b,    /* Yukarı */
-          25px -25px 0 #ff5722, /* Sağ Üst */
-          30px 0 0 #ffeb3b,     /* Sağ */
-          25px 25px 0 #ff5722,  /* Sağ Alt */
-          0 30px 0 #ffeb3b,     /* Aşağı */
-          -25px 25px 0 #ff5722, /* Sol Alt */
-          -30px 0 0 #ffeb3b,    /* Sol */
-          -25px -25px 0 #ff5722;/* Sol Üst */
+          0 -45px 0 #fff176,    
+          35px -35px 0 #ff3d00, 
+          45px 0 0 #fff176,     
+          35px 35px 0 #ff3d00,  
+          0 45px 0 #fff176,     
+          -35px 35px 0 #ff3d00, 
+          -45px 0 0 #fff176,    
+          -35px -35px 0 #ff3d00;
       }
     }
 
@@ -338,28 +344,35 @@
       top:50%;
       transform:translate(-50%,-50%);
       background:rgba(0,0,0,.95);
-      padding:16px 24px;
-      border-radius:16px;
-      font-size:12px;
+      padding:20px 30px;
+      border-radius:20px;
+      font-size:14px;
       line-height:1.5;
-      box-shadow:0 0 30px rgba(255,206,58,0.2);
+      box-shadow:0 0 40px rgba(255, 78, 78, 0.3);
       display:none;
       text-align:center;
       z-index: 50;
-      border: 1px solid #333;
+      border: 1px solid #ff4e4e;
+      min-width: 250px;
     }
-    .overlay strong{color:#ffce3a;}
+    .overlay h2 {
+        margin-bottom: 10px;
+        font-size: 18px;
+        color: #fff;
+    }
     .btn{
-      margin-top:12px;
-      padding:8px 16px;
+      margin-top:15px;
+      padding:10px 24px;
       border-radius:999px;
       border:none;
-      background:#ffce3a;
+      background: linear-gradient(to bottom, #ffce3a, #ff9800);
       color:#000;
-      font-size:11px;
-      font-weight:700;
+      font-size:12px;
+      font-weight:800;
       cursor:pointer;
+      box-shadow: 0 4px 10px rgba(255, 152, 0, 0.4);
     }
+    .btn:active{ transform: scale(0.95); }
   </style>
 </head>
 <body>
@@ -368,9 +381,7 @@
     <h1>Babypeacock Meteor Match</h1>
     <span>Sürükle, patlat, köpeği finişe ulaştır.</span>
     <div class="badge">
-      <span>Babypeacock universe</span>
-      <span>·</span>
-      <strong>Ateş Efekti 🔥</strong>
+      <strong>HARD MODE 🔥</strong>
     </div>
   </div>
 
@@ -390,52 +401,50 @@
   <div class="board-wrap">
     <div class="top-row">
       <div>Skor: <span id="score">0</span></div>
-      <div>Hamle: <span id="moves">0</span></div>
+      <div>Kalan Hamle: <span id="moves">20</span></div>
     </div>
 
     <div class="targets">
       <span class="targets-title">Hedef:</span>
       <span class="target-pill">
         <span class="target-dot dot-r"></span>
-        <span id="t_r">0/12</span>
-      </span>
+        <span id="t_r">0/16</span> </span>
       <span class="target-pill">
         <span class="target-dot dot-y"></span>
-        <span id="t_y">0/8</span>
-      </span>
-      <span class="targets-sub">3+ Ateşli Patlama 🔥</span>
+        <span id="t_y">0/12</span> </span>
     </div>
 
     <div class="board" id="board"></div>
     <div class="hint">
-      Meteorları <strong>sürükleyerek</strong> (swipe) eşleştir. <br>Büyük patlamalar için kombo yap!
+      Meteorları <strong>sürükleyerek</strong> eşleştir. <br>Dikkat: Hamle sayısı azaldı!
     </div>
   </div>
 </div>
 
 <div class="overlay" id="overlay">
-  <div id="overlayText"></div>
-  <button class="btn" onclick="restart()">Tekrar Oyna</button>
+  <div id="overlayContent"></div>
+  <button class="btn" onclick="restart()">Tekrar Dene</button>
 </div>
 
 <script>
-/* ==== Meteor Match - Swipe + Fire Effect Logic ==== */
+/* ==== Meteor Match - HARD MODE Logic ==== */
 
 const rows = 8;
 const cols = 8;
 const types = ['r','g','y','s']; 
 
-const MAX_MOVES = 25;
-let movesLeft = MAX_MOVES;
+// ZORLUK AYARLARI
+const MAX_MOVES = 20; // Hamle sayısı düşürüldü (Zor)
+const targets = { r: 16, y: 12 }; // Hedefler yükseltildi (Zor)
 
-const targets = { r: 12, y: 8 };
+let movesLeft = MAX_MOVES;
 let collected = { r:0, y:0 };
 
 const boardEl = document.getElementById('board');
 const scoreEl = document.getElementById('score');
 const movesEl = document.getElementById('moves');
 const overlay = document.getElementById('overlay');
-const overlayText = document.getElementById('overlayText');
+const overlayContent = document.getElementById('overlayContent');
 const dogeMarker = document.getElementById('dogeMarker');
 const raceBar = document.getElementById('raceBar');
 const progressText = document.getElementById('progressText');
@@ -584,10 +593,9 @@ function refreshVisual(){
       gem.className = 'gem ' + board[r][c];
       gem.style.opacity = 1;
       gem.style.transform = 'scale(1)';
-      gem.style.filter = 'none';
+      gem.style.filter = 'drop-shadow(0 4px 4px rgba(0,0,0,0.5))';
       
-      // Animasyon classlarını temizle ama animasyonun bitmesini beklemek daha iyi olurdu
-      // Hızlı oynanış için burada temizliyoruz, CSS animasyonları pointer-events:none olduğu için sorun değil
+      // Efekt temizliği
       cell.classList.remove('pop', 'boom', 'explode'); 
     }
   }
@@ -712,14 +720,14 @@ function handleMatches(matches){
 
     const more = findMatches();
     if(more.length>0){
-      setTimeout(() => handleMatches(more), 250);
+      setTimeout(() => handleMatches(more), 300); // Biraz daha yavaşlatıldı ki patlama görünsün
     }else{
       animating = false;
       if(!gameOver && movesLeft<=0 && progress<1){
         showLose();
       }
     }
-  }, 450); 
+  }, 500); // Bekleme süresi artırıldı
 }
 
 function updateScore(v){
@@ -729,6 +737,13 @@ function updateScore(v){
 
 function updateMoves(){
   movesEl.textContent = movesLeft;
+  if(movesLeft <= 5) {
+      movesEl.style.color = "#ff0000";
+      movesEl.style.textShadow = "0 0 5px red";
+  } else {
+      movesEl.style.color = "#ff4e4e";
+      movesEl.style.textShadow = "none";
+  }
 }
 
 function updateTargetsUI(){
@@ -745,7 +760,7 @@ function updateTargetsUI(){
 
   if(progress >= 1 && !gameOver){
     setTimeout(() => {
-       showWin("Harika! Hedefler tamam, ateşli bitiş! 🔥🐕");
+       showWin();
     }, 600);
   }
 }
@@ -759,17 +774,29 @@ function updateProgress(p){
   }
 }
 
-function showWin(msg){
+function showWin(){
   if(gameOver) return;
   gameOver = true;
-  overlayText.innerHTML = msg;
+  overlayContent.innerHTML = `
+    <h2>TEBRİKLER! 🏆</h2>
+    <p>Tüm meteorları yok ettin ve Doge'u kurtardın!</p>
+    <br>
+    <p style="font-size:16px">Skor: <strong style="color:#ffce3a">${score}</strong></p>
+  `;
   overlay.style.display = "block";
 }
 
 function showLose(){
   if(gameOver) return;
   gameOver = true;
-  overlayText.innerHTML = "Hamleler bitti 😔";
+  overlayContent.innerHTML = `
+    <h2 style="color:#ff4e4e">OYUN BİTTİ 💀</h2>
+    <p>Meteorlar çok sert çıktı...</p>
+    <br>
+    <p>Kalan Hedefler:</p>
+    <p>🔴 ${targets.r - collected.r > 0 ? targets.r - collected.r : 0} adet</p>
+    <p>🟡 ${targets.y - collected.y > 0 ? targets.y - collected.y : 0} adet</p>
+  `;
   overlay.style.display = "block";
 }
 
