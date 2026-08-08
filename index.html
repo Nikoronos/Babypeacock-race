@@ -6,7 +6,7 @@
     <title>Memoli Piknik | 1999'dan Beri</title>
     <style>
         :root {
-            --primary-color: #d32f2f; /* Canlı Kırmızı */
+            --primary-color: #ff0000; /* Tam ve Canlı Kırmızı */
             --secondary-color: #212121; /* Koyu gri */
             --bg-color: #f5f5f5;
             --text-color: #333;
@@ -23,11 +23,12 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         /* Navbar - Beyaz Üstüne Kırmızı Konsept */
         header {
-            background-color: #ffffff; /* Beyaz Arka Plan */
+            background-color: #ffffff;
             padding: 1rem 5%;
             display: flex;
             justify-content: space-between;
@@ -35,13 +36,13 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Hafif gölge */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .logo {
             font-size: 1.8rem;
             font-weight: 900;
-            color: var(--primary-color); /* Kırmızı İşletme Adı */
+            color: var(--primary-color);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -55,7 +56,7 @@
         nav a {
             color: var(--secondary-color);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             transition: color 0.3s;
         }
 
@@ -63,9 +64,9 @@
             color: var(--primary-color);
         }
 
-        /* Hero Section */
+        /* Hero Section & Slayt Arka Plan */
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+            position: relative;
             height: 65vh;
             display: flex;
             flex-direction: column;
@@ -74,26 +75,85 @@
             text-align: center;
             color: white;
             padding: 0 20px;
+            overflow: hidden;
+        }
+
+        /* Slayt Gösterisi Ayarları */
+        .slideshow {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation: fade 16s infinite;
+        }
+
+        /* Arka planı biraz karartarak yazıların okunmasını sağlar */
+        .slide::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        /* Slayt Görselleri ve Zamanlamaları (Unsplash'ten kaliteli görseller) */
+        .slide1 { 
+            background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); 
+            animation-delay: 0s; 
+        } /* Mangal */
+        .slide2 { 
+            background-image: url('https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); 
+            animation-delay: 4s; 
+        } /* Şelale */
+        .slide3 { 
+            background-image: url('https://images.unsplash.com/photo-1448375240586-882707db8855?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); 
+            animation-delay: 8s; 
+        } /* Orman / Yeşillik */
+        .slide4 { 
+            background-image: url('https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); 
+            animation-delay: 12s; 
+        } /* Buz gibi içecekler */
+
+        @keyframes fade {
+            0% { opacity: 0; transform: scale(1); }
+            10% { opacity: 1; }
+            25% { opacity: 1; }
+            35% { opacity: 0; transform: scale(1.05); }
+            100% { opacity: 0; }
+        }
+
+        /* Slayt Üzerindeki Yazılar */
+        .hero-content {
+            position: relative;
+            z-index: 1;
         }
 
         .since {
             font-size: 1.2rem;
-            color: #ffc107; /* Dikkat çekici sarı/altın rengi */
+            color: #ffc107;
             letter-spacing: 2px;
             margin-bottom: 5px;
             font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
         .hero h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
         }
 
         .hero p.slogan {
             font-size: 1.4rem;
             margin-bottom: 25px;
             font-weight: 300;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
 
         .btn {
@@ -107,10 +167,12 @@
             cursor: pointer;
             text-decoration: none;
             transition: transform 0.3s, background 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
         }
 
         .btn:hover {
-            background-color: #b71c1c;
+            background-color: #cc0000;
             transform: scale(1.05);
         }
 
@@ -225,12 +287,23 @@
         </nav>
     </header>
 
-    <!-- Karşılama Alanı -->
+    <!-- Karşılama Alanı & Slayt -->
     <section class="hero" id="hakkimizda">
-        <div class="since">Since 1999</div>
-        <h1>Memoli Piknik</h1>
-        <p class="slogan">"Doğanın kalbinde, ateşin ustası... 1999'dan beri değişmeyen lezzet!"</p>
-        <a href="#menu" class="btn">Lezzetleri Keşfet</a>
+        <!-- Arka Plan Slaytları -->
+        <div class="slideshow">
+            <div class="slide slide1"></div> <!-- Mangal -->
+            <div class="slide slide2"></div> <!-- Şelale -->
+            <div class="slide slide3"></div> <!-- Orman -->
+            <div class="slide slide4"></div> <!-- İçecekler -->
+        </div>
+
+        <!-- Ön Plandaki Yazılar -->
+        <div class="hero-content">
+            <div class="since">Since 1999</div>
+            <h1>Memoli Piknik</h1>
+            <p class="slogan">"Doğanın kalbinde, ateşin ustası... 1999'dan beri değişmeyen lezzet!"</p>
+            <a href="#menu" class="btn">Lezzetleri Keşfet</a>
+        </div>
     </section>
 
     <!-- Menü Alanı -->
