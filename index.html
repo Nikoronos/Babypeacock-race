@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memoli Piknik | Doğal ve Lezzetli</title>
+    <title>Memoli Piknik | 1999'dan Beri</title>
     <style>
         :root {
-            --primary-color: #e65100; /* Turuncu/Ateş rengi */
+            --primary-color: #d32f2f; /* Canlı Kırmızı */
             --secondary-color: #212121; /* Koyu gri */
-            --bg-color: #fafafa;
+            --bg-color: #f5f5f5;
             --text-color: #333;
         }
 
@@ -25,10 +25,9 @@
             line-height: 1.6;
         }
 
-        /* Navbar */
+        /* Navbar - Beyaz Üstüne Kırmızı Konsept */
         header {
-            background-color: var(--secondary-color);
-            color: white;
+            background-color: #ffffff; /* Beyaz Arka Plan */
             padding: 1rem 5%;
             display: flex;
             justify-content: space-between;
@@ -36,12 +35,15 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Hafif gölge */
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--primary-color); /* Kırmızı İşletme Adı */
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         nav ul {
@@ -51,9 +53,9 @@
         }
 
         nav a {
-            color: white;
+            color: var(--secondary-color);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             transition: color 0.3s;
         }
 
@@ -63,8 +65,8 @@
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
-            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+            height: 65vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -74,93 +76,137 @@
             padding: 0 20px;
         }
 
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
+        .since {
+            font-size: 1.2rem;
+            color: #ffc107; /* Dikkat çekici sarı/altın rengi */
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-style: italic;
         }
 
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p.slogan {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            font-weight: 300;
         }
 
         .btn {
             background-color: var(--primary-color);
             color: white;
-            padding: 10px 25px;
+            padding: 12px 30px;
             border: none;
-            border-radius: 5px;
+            border-radius: 50px;
             font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
             text-decoration: none;
-            transition: background 0.3s;
+            transition: transform 0.3s, background 0.3s;
         }
 
         .btn:hover {
-            background-color: #bf360c;
+            background-color: #b71c1c;
+            transform: scale(1.05);
         }
 
         /* Container & Menu */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 50px 20px;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2rem;
-            margin-bottom: 30px;
+            font-size: 2.2rem;
+            margin-bottom: 40px;
             color: var(--secondary-color);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            margin: 10px auto 0;
         }
 
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
 
         .menu-item {
             background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             text-align: center;
             transition: transform 0.3s;
+            border-bottom: 4px solid transparent;
         }
 
         .menu-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            border-bottom: 4px solid var(--primary-color);
         }
 
         .menu-item h3 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
+            color: var(--secondary-color);
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+        }
+
+        .menu-item p {
+            color: #666;
+            font-size: 0.95rem;
         }
 
         .menu-item .price {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            color: var(--secondary-color);
-            margin-top: 10px;
+            color: var(--primary-color);
+            margin-top: 15px;
         }
 
         /* Footer */
         footer {
             background-color: var(--secondary-color);
-            color: white;
+            color: #ddd;
             text-align: center;
-            padding: 20px;
-            margin-top: 40px;
+            padding: 40px 20px;
+            margin-top: 20px;
+        }
+        
+        footer h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        footer p {
+            margin-bottom: 8px;
+            font-size: 1.1rem;
         }
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
             nav ul {
-                display: none; /* Mobilde menüyü şimdilik gizliyoruz, hamburger menü eklenebilir */
+                display: none; 
             }
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
+            }
+            .hero p.slogan {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -180,10 +226,11 @@
     </header>
 
     <!-- Karşılama Alanı -->
-    <section class="hero">
-        <h1>Memoli Piknik'e Hoş Geldiniz</h1>
-        <p>Ateşin lezzetle buluştuğu yer. Taze etler, günlük mezeler.</p>
-        <a href="#menu" class="btn">Menüyü İncele</a>
+    <section class="hero" id="hakkimizda">
+        <div class="since">Since 1999</div>
+        <h1>Memoli Piknik</h1>
+        <p class="slogan">"Doğanın kalbinde, ateşin ustası... 1999'dan beri değişmeyen lezzet!"</p>
+        <a href="#menu" class="btn">Lezzetleri Keşfet</a>
     </section>
 
     <!-- Menü Alanı -->
@@ -197,7 +244,7 @@
             </div>
             <div class="menu-item">
                 <h3>Kasap Köfte Porsiyon</h3>
-                <p>Özel baharatlarla yoğrulmuş günlük kasap köfte, pilav ve salata eşliğinde.</p>
+                <p>Özel baharatlarla yoğrulmuş günlük kasap köfte, pilav ve taze yeşillikler eşliğinde.</p>
                 <div class="price">280 ₺</div>
             </div>
             <div class="menu-item">
@@ -216,14 +263,12 @@
     <!-- İletişim & Alt Bilgi -->
     <footer id="iletisim">
         <h3>Memoli Piknik</h3>
-        <p>Adres: Lezzet Caddesi, Piknik Sokak No:1</p>
-        <p>Telefon: 0555 123 45 67</p>
-        <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">&copy; 2026 Memoli Piknik. Tüm hakları saklıdır.</p>
+        <p><strong>Adres:</strong> Kayacı Mahallesi, Doktorun Yeri, Erdemli / Mersin</p>
+        <p><strong>Telefon:</strong> 0555 123 45 67</p>
+        <div style="margin-top: 20px; font-size: 0.9rem; color: #777;">
+            &copy; 2026 Memoli Piknik. Tüm hakları saklıdır.
+        </div>
     </footer>
 
-    <script>
-        // İleride sepete ekle veya sipariş ver gibi butonların işlevleri buraya yazılabilir.
-        console.log("Memoli Piknik Uygulaması Başarıyla Yüklendi!");
-    </script>
 </body>
 </html>
