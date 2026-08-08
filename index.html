@@ -1,797 +1,229 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Babypeacock Meteor Match - Big & Clean</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      background:#020012;
-      color:#fff;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-      padding:5px; /* Kenar boşluğunu azalttık */
-      overscroll-behavior: none; 
-    }
-    .wrap{
-      width:100%;
-      max-width:480px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      align-items:center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoli Piknik | Doğal ve Lezzetli</title>
+    <style>
+        :root {
+            --primary-color: #e65100; /* Turuncu/Ateş rengi */
+            --secondary-color: #212121; /* Koyu gri */
+            --bg-color: #fafafa;
+            --text-color: #333;
+        }
 
-    /* BAŞLIK */
-    .title{
-      text-align:center;
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .title h1{
-      font-size:20px;
-      font-weight:900;
-      letter-spacing:.03em;
-      text-shadow: 0 0 15px rgba(255, 78, 78, 0.6);
-    }
-    .title span{
-      font-size:10px;
-      opacity:.8;
-    }
-    .badge{
-      margin-top:2px;
-      padding:3px 8px;
-      border-radius:999px;
-      background:rgba(0,0,0,.6);
-      font-size:9px;
-      display:inline-flex;
-      gap:5px;
-      align-items:center;
-      border: 1px solid #333;
-    }
-    .badge strong{color:#ff5722;}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    /* KÖPEK PROGRESS BAR */
-    .race-wrap{
-      width:100%;
-      margin-top:2px;
-    }
-    .race-label{
-      font-size:10px;
-      display:flex;
-      justify-content:space-between;
-      gap:6px;
-      margin-bottom:2px;
-      padding: 0 5px;
-    }
-    .race-label span strong{color:#ffce3a;}
-    .race-bar{
-      position:relative;
-      width:100%;
-      height:36px; /* Biraz incelttik */
-      border-radius:18px;
-      padding:3px 8px;
-      background:
-        radial-gradient(circle at 0 0,rgba(255,255,255,.15),transparent 55%),
-        linear-gradient(to right,#021723,#273b70,#ff4e4e);
-      box-shadow:0 5px 15px rgba(0,0,0,.9);
-      overflow:hidden;
-    }
-    .finish-tag{
-      position:absolute;
-      right:6px;
-      top:6px;
-      padding:2px 8px;
-      border-radius:999px;
-      font-size:9px;
-      background:rgba(0,0,0,.85);
-      border:1px solid #ffce3a;
-      color:#ffce3a;
-    }
-    .doge-marker{
-      position:absolute;
-      left:6px;
-      bottom:2px;
-      width:36px;
-      height:30px;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      background:transparent;
-      transition:transform .22s ease-out;
-      z-index: 2;
-    }
-    .doge-marker video{
-      height:28px;
-      border-radius:999px;
-      display:block;
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
 
-    /* TAHTA KARTI */
-    .board-wrap{
-      margin-top:4px;
-      padding:8px;
-      border-radius:20px;
-      width: 100%; /* Tam genişlik */
-      background: radial-gradient(circle at 50% 50%, rgba(20, 20, 40, 0.4), transparent 80%);
-      /* Arka plan rengini çok silik yaptık, kutu hissi gitsin */
-    }
-    .top-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:6px;
-      font-size:12px;
-      margin-bottom:6px;
-      padding: 0 5px;
-    }
-    #score{color:#ffce3a;font-weight:700;}
-    #moves{color:#ff4e4e;font-weight:700;} 
+        /* Navbar */
+        header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    /* HEDEF SATIRI */
-    .targets{
-      margin-bottom:8px;
-      font-size:11px;
-      display:flex;
-      justify-content: center;
-      gap:10px;
-      align-items:center;
-    }
-    .targets-title{
-      opacity:.9;
-      margin-right:4px;
-    }
-    .target-pill{
-      padding:3px 10px;
-      border-radius:999px;
-      background:rgba(0,0,0,.6);
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .target-dot{
-      width:10px;
-      height:10px;
-      border-radius:50%;
-    }
-    .dot-r{background:#ff3b3b; box-shadow: 0 0 5px #ff3b3b;}
-    .dot-y{background:#ffe45d; box-shadow: 0 0 5px #ffe45d;}
-    
-    /* OYUN ALANI */
-    .board{
-      width:100%;
-      aspect-ratio:1/1;
-      display:grid;
-      grid-template-columns:repeat(8,1fr);
-      grid-template-rows:repeat(8,1fr);
-      gap:0px; /* Boşluk SIFIRLANDI */
-      touch-action: none; 
-      background: transparent !important; /* Board arkası temizlendi */
-      padding:0;
-      user-select: none;
-      position: relative;
-    }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
 
-    /* TİTREME EFEKTİ */
-    .board.shake{
-      animation:shake .2s ease-in-out;
-    }
-    @keyframes shake{
-      0%{transform:translate(0,0);}
-      20%{transform:translate(-3px,3px);}
-      40%{transform:translate(3px,-3px);}
-      60%{transform:translate(-2px,2px);}
-      80%{transform:translate(1px,-1px);}
-      100%{transform:translate(0,0);}
-    }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
 
-    .cell{
-      position:relative;
-      background: none !important; /* KESİN ÇÖZÜM: Kareler gitti */
-      box-shadow: none !important;
-      border: none !important;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      overflow:visible; 
-      z-index: 1;
-    }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
 
-    .gem{
-      width:96%; /* Taşlar büyütüldü */
-      height:96%;
-      transform:scale(1);
-      transition:transform .1s, opacity .1s;
-      background-size:contain;
-      background-position:center;
-      background-repeat:no-repeat;
-      pointer-events: none;
-      position: relative;
-      z-index: 5;
-      filter: drop-shadow(0 5px 5px rgba(0,0,0,0.6)); /* Derinlik gölgesi */
-    }
+        nav a:hover {
+            color: var(--primary-color);
+        }
 
-    /* RESIMLER */
-    .r{background-image:url("meteor_red.png");}
-    .g{background-image:url("meteor_green.png");}
-    .y{background-image:url("meteor_yellow.png");}
-    .s{background-image:url("meteor_gray.png");}
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
 
-    /* Seçilince büyüme */
-    .cell.selected .gem{
-      transform:scale(1.15);
-      filter:drop-shadow(0 0 12px rgba(255,255,255,.9));
-      z-index: 20;
-    }
-    
-    /* Patlama animasyonu */
-    .cell.pop .gem{
-      animation:pop .15s forwards;
-    }
-    @keyframes pop{
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(0); opacity: 0; }
-    }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
 
-    /* ==== GÜÇLENDİRİLMİŞ ATEŞ EFEKTLERİ ==== */
-    .cell.boom::after{
-      content:"";
-      position:absolute;
-      left:50%;
-      top:50%;
-      width:140%; /* Patlama daha büyük */
-      height:140%;
-      transform:translate(-50%,-50%) scale(0);
-      border-radius:50%;
-      pointer-events:none;
-      background: radial-gradient(circle, #ffffff 10%, #fff176 30%, #ff3d00 60%, transparent 70%);
-      opacity:0;
-      z-index: 10;
-      mix-blend-mode: screen; 
-    }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
 
-    .cell.boom.explode::after {
-       animation: fireball .5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-    }
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
 
-    @keyframes fireball{
-      0% { transform:translate(-50%,-50%) scale(0.5); opacity:1; }
-      30% { transform:translate(-50%,-50%) scale(2.5); opacity: 1; }
-      100%{ transform:translate(-50%,-50%) scale(3.0); opacity:0; }
-    }
+        .btn:hover {
+            background-color: #bf360c;
+        }
 
-    /* Kıvılcımlar */
-    .cell.boom::before{
-      content: "";
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 11;
-      box-shadow: 0 0 0 #fff;
-    }
+        /* Container & Menu */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
 
-    .cell.boom.explode::before {
-      animation: sparks .6s ease-out forwards;
-    }
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--secondary-color);
+        }
 
-    @keyframes sparks {
-      0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-        box-shadow: 
-          0 0 0 #fff176, 0 0 0 #ff3d00, 
-          0 0 0 #fff176, 0 0 0 #ff3d00, 
-          0 0 0 #fff176, 0 0 0 #ff3d00, 
-          0 0 0 #fff176, 0 0 0 #ff3d00;
-      }
-      100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.5);
-        box-shadow: 
-          0 -50px 0 #fff176,    
-          40px -40px 0 #ff3d00, 
-          50px 0 0 #fff176,     
-          40px 40px 0 #ff3d00,  
-          0 50px 0 #fff176,     
-          -40px 40px 0 #ff3d00, 
-          -50px 0 0 #fff176,    
-          -40px -40px 0 #ff3d00;
-      }
-    }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
 
-    .hint{
-      margin-top:10px;
-      font-size:11px;
-      text-align:center;
-      opacity:.7;
-    }
+        .menu-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
 
-    /* OVERLAY */
-    .overlay{
-      position:fixed;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      background:rgba(0,0,0,.95);
-      padding:20px 30px;
-      border-radius:20px;
-      font-size:14px;
-      line-height:1.5;
-      box-shadow:0 0 40px rgba(255, 78, 78, 0.3);
-      display:none;
-      text-align:center;
-      z-index: 50;
-      border: 1px solid #ff4e4e;
-      min-width: 260px;
-    }
-    .overlay h2 { margin-bottom: 10px; font-size: 18px; color: #fff; }
-    .btn{
-      margin-top:15px;
-      padding:10px 24px;
-      border-radius:999px;
-      border:none;
-      background: linear-gradient(to bottom, #ffce3a, #ff9800);
-      color:#000;
-      font-size:12px;
-      font-weight:800;
-      cursor:pointer;
-      box-shadow: 0 4px 10px rgba(255, 152, 0, 0.4);
-    }
-    .btn:active{ transform: scale(0.95); }
-  </style>
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .menu-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .menu-item .price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none; /* Mobilde menüyü şimdilik gizliyoruz, hamburger menü eklenebilir */
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="title">
-    <h1>Babypeacock Meteor Match</h1>
-    <span>Sürükle, patlat, köpeği finişe ulaştır.</span>
-    <div class="badge">
-      <strong>HARD MODE 🔥</strong>
+
+    <!-- Üst Menü -->
+    <header>
+        <div class="logo">Memoli Piknik</div>
+        <nav>
+            <ul>
+                <li><a href="#hakkimizda">Hakkımızda</a></li>
+                <li><a href="#menu">Menü</a></li>
+                <li><a href="#iletisim">İletişim</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Karşılama Alanı -->
+    <section class="hero">
+        <h1>Memoli Piknik'e Hoş Geldiniz</h1>
+        <p>Ateşin lezzetle buluştuğu yer. Taze etler, günlük mezeler.</p>
+        <a href="#menu" class="btn">Menüyü İncele</a>
+    </section>
+
+    <!-- Menü Alanı -->
+    <div class="container" id="menu">
+        <h2 class="section-title">Öne Çıkan Lezzetlerimiz</h2>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <h3>Memoli Özel Karışık Izgara</h3>
+                <p>Kuzu şiş, adana, tavuk kanat ve ızgara köfte. Közlenmiş biber ve domates ile.</p>
+                <div class="price">450 ₺</div>
+            </div>
+            <div class="menu-item">
+                <h3>Kasap Köfte Porsiyon</h3>
+                <p>Özel baharatlarla yoğrulmuş günlük kasap köfte, pilav ve salata eşliğinde.</p>
+                <div class="price">280 ₺</div>
+            </div>
+            <div class="menu-item">
+                <h3>Tavuk Kanat</h3>
+                <p>Özel sosla marine edilmiş mangal ateşinde nar gibi kızarmış kanat.</p>
+                <div class="price">250 ₺</div>
+            </div>
+            <div class="menu-item">
+                <h3>Günün Meze Tabağı</h3>
+                <p>Haydari, acılı ezme, şakşuka ve humus (Günlük taze hazırlanır).</p>
+                <div class="price">150 ₺</div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="race-wrap">
-    <div class="race-label">
-      <span>Hedefleri topla, koş!</span>
-      <span><strong id="progressText">0%</strong></span>
-    </div>
-    <div class="race-bar" id="raceBar">
-      <div class="doge-marker" id="dogeMarker">
-        <video src="Doge.mp4" autoplay loop muted playsinline></video>
-      </div>
-      <div class="finish-tag">FINISH</div>
-    </div>
-  </div>
+    <!-- İletişim & Alt Bilgi -->
+    <footer id="iletisim">
+        <h3>Memoli Piknik</h3>
+        <p>Adres: Lezzet Caddesi, Piknik Sokak No:1</p>
+        <p>Telefon: 0555 123 45 67</p>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">&copy; 2026 Memoli Piknik. Tüm hakları saklıdır.</p>
+    </footer>
 
-  <div class="board-wrap">
-    <div class="top-row">
-      <div>Skor: <span id="score">0</span></div>
-      <div>Kalan Hamle: <span id="moves">19</span></div>
-    </div>
-
-    <div class="targets">
-      <span class="targets-title">Hedef:</span>
-      <span class="target-pill">
-        <span class="target-dot dot-r"></span>
-        <span id="t_r">0/16</span>
-      </span>
-      <span class="target-pill">
-        <span class="target-dot dot-y"></span>
-        <span id="t_y">0/12</span>
-      </span>
-    </div>
-
-    <div class="board" id="board"></div>
-    <div class="hint">
-      Meteorları sürükleyerek eşleştir.
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="overlay">
-  <div id="overlayContent"></div>
-  <button class="btn" onclick="restart()">Tekrar Dene</button>
-</div>
-
-<script>
-/* ==== Meteor Match - BIGGER & CLEANER ==== */
-
-const rows = 8;
-const cols = 8;
-const types = ['r','g','y','s']; 
-
-// ZORLUK AYARLARI
-const MAX_MOVES = 19; // Zorluk korundu
-const targets = { r: 16, y: 12 }; 
-
-let movesLeft = MAX_MOVES;
-let collected = { r:0, y:0 };
-
-const boardEl = document.getElementById('board');
-const scoreEl = document.getElementById('score');
-const movesEl = document.getElementById('moves');
-const overlay = document.getElementById('overlay');
-const overlayContent = document.getElementById('overlayContent');
-const dogeMarker = document.getElementById('dogeMarker');
-const raceBar = document.getElementById('raceBar');
-const progressText = document.getElementById('progressText');
-
-const targetEls = {
-  r: document.getElementById('t_r'),
-  y: document.getElementById('t_y')
-};
-
-let board = [];
-let selected = null; 
-let animating = false;
-let score = 0;
-let progress = 0;
-let gameOver = false;
-
-// Swipe değişkenleri
-let startX = 0;
-let startY = 0;
-let startRow = null;
-let startCol = null;
-
-function init(){
-  board = [];
-  boardEl.innerHTML = '';
-  score = 0;
-  progress = 0;
-  movesLeft = MAX_MOVES;
-  gameOver = false;
-  selected = null;
-  animating = false;
-
-  collected.r = 0;
-  collected.y = 0;
-
-  updateScore(0);
-  updateMoves();
-  updateTargetsUI();
-  overlay.style.display = "none";
-
-  for(let r=0;r<rows;r++){
-    const row = [];
-    for(let c=0;c<cols;c++){
-      const t = randomType();
-      row.push(t);
-      const cell = createCell(r,c,t);
-      boardEl.appendChild(cell);
-    }
-    board.push(row);
-  }
-
-  resolveBoard(); 
-}
-
-function randomType(){
-  return types[Math.floor(Math.random()*types.length)];
-}
-
-function createCell(r,c,t){
-  const cell = document.createElement('div');
-  cell.className = 'cell';
-  cell.dataset.r = r;
-  cell.dataset.c = c;
-
-  const gem = document.createElement('div');
-  gem.className = 'gem ' + t;
-  cell.appendChild(gem);
-
-  cell.addEventListener('pointerdown', handleInputStart);
-  cell.addEventListener('pointerup', handleInputEnd);
-
-  return cell;
-}
-
-/* ==== SWIPE MANTIĞI ==== */
-function handleInputStart(e) {
-  if(animating || gameOver) return;
-  e.preventDefault();
-  startX = e.clientX;
-  startY = e.clientY;
-  startRow = parseInt(e.currentTarget.dataset.r);
-  startCol = parseInt(e.currentTarget.dataset.c);
-
-  if(selected) {
-     getCell(selected.r, selected.c).classList.remove('selected');
-  }
-  selected = {r: startRow, c: startCol};
-  e.currentTarget.classList.add('selected');
-}
-
-function handleInputEnd(e) {
-  if(animating || gameOver || startRow === null) return;
-
-  const endX = e.clientX;
-  const endY = e.clientY;
-  const diffX = endX - startX;
-  const diffY = endY - startY;
-  const threshold = 15; // Daha hassas
-
-  if(Math.abs(diffX) < threshold && Math.abs(diffY) < threshold) {
-     return; 
-  }
-
-  let targetRow = startRow;
-  let targetCol = startCol;
-
-  if(Math.abs(diffX) > Math.abs(diffY)) {
-    if(diffX > 0) targetCol++; 
-    else targetCol--;          
-  } else {
-    if(diffY > 0) targetRow++; 
-    else targetRow--;          
-  }
-
-  if(targetRow >= 0 && targetRow < rows && targetCol >= 0 && targetCol < cols) {
-    if(selected) {
-      getCell(selected.r, selected.c).classList.remove('selected');
-      selected = null;
-    }
-    swapAndCheck(startRow, startCol, targetRow, targetCol);
-  } else {
-    if(selected) {
-      getCell(selected.r, selected.c).classList.remove('selected');
-      selected = null;
-    }
-  }
-  startRow = null;
-  startCol = null;
-}
-
-function getCell(r,c){
-  return boardEl.children[r*cols + c];
-}
-
-function swapTypes(r1,c1,r2,c2){
-  const tmp = board[r1][c1];
-  board[r1][c1] = board[r2][c2];
-  board[r2][c2] = tmp;
-}
-
-function refreshVisual(){
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const cell = getCell(r,c);
-      const gem = cell.querySelector('.gem');
-      gem.className = 'gem ' + board[r][c];
-      gem.style.opacity = 1;
-      gem.style.transform = 'scale(1)';
-      gem.style.filter = 'drop-shadow(0 5px 5px rgba(0,0,0,0.6))';
-      
-      cell.classList.remove('pop', 'boom', 'explode'); 
-    }
-  }
-}
-
-function swapAndCheck(r1,c1,r2,c2){
-  animating = true;
-  swapTypes(r1,c1,r2,c2);
-  refreshVisual();
-
-  const matches = findMatches();
-  if(matches.length === 0){
-    setTimeout(()=>{
-      swapTypes(r1,c1,r2,c2);
-      refreshVisual();
-      animating = false;
-    }, 200);
-  }else{
-    movesLeft--;
-    if(movesLeft<0) movesLeft = 0;
-    updateMoves();
-    handleMatches(matches);
-  }
-}
-
-function findMatches(){
-  const toClear = [];
-  // Yatay
-  for(let r=0;r<rows;r++){
-    let count = 1;
-    for(let c=1;c<=cols;c++){
-      const curr = c<cols ? board[r][c] : null;
-      const prev = board[r][c-1];
-      if(curr && curr === prev){
-        count++;
-      }else{
-        if(count>=3){
-          for(let k=0;k<count;k++) toClear.push({r, c:c-1-k});
-        }
-        count = 1;
-      }
-    }
-  }
-  // Dikey
-  for(let c=0;c<cols;c++){
-    let count = 1;
-    for(let r=1;r<=rows;r++){
-      const curr = r<rows ? board[r][c] : null;
-      const prev = board[r-1][c];
-      if(curr && curr === prev){
-        count++;
-      }else{
-        if(count>=3){
-          for(let k=0;k<count;k++) toClear.push({r:r-1-k, c});
-        }
-        count = 1;
-      }
-    }
-  }
-  const seen = new Set();
-  const unique = [];
-  for(const p of toClear){
-    const key = p.r + '-' + p.c;
-    if(!seen.has(key)){
-      seen.add(key);
-      unique.push(p);
-    }
-  }
-  return unique;
-}
-
-function handleMatches(matches){
-  if(matches.length === 0){
-    animating = false;
-    return;
-  }
-
-  const typeCount = {};
-  matches.forEach(p=>{
-    const t = board[p.r][p.c];
-    if(!typeCount[t]) typeCount[t] = 0;
-    typeCount[t]++;
-
-    const cell = getCell(p.r,p.c);
-    cell.classList.add('pop', 'boom', 'explode');
-  });
-
-  boardEl.classList.add('shake');
-
-  const n = matches.length;
-  const gain = n * 10 + (n > 3 ? (n-3)*20 : 0); 
-  updateScore(score + gain);
-
-  for(const t in typeCount){
-    if(targets[t] != null){
-      collected[t] += typeCount[t];
-    }
-  }
-  updateTargetsUI();
-
-  setTimeout(()=>{
-    boardEl.classList.remove('shake');
-    matches.forEach(p=>{ board[p.r][p.c] = null; });
-
-    // Düşürme
-    for(let c=0;c<cols;c++){
-      let writeRow = rows - 1;
-      for(let r=rows-1;r>=0;r--){
-        if(board[r][c]){
-          board[writeRow][c] = board[r][c];
-          if(writeRow !== r) board[r][c] = null;
-          writeRow--;
-        }
-      }
-      for(let r=writeRow;r>=0;r--){
-        board[r][c] = randomType();
-      }
-    }
-
-    refreshVisual();
-
-    const more = findMatches();
-    if(more.length>0){
-      setTimeout(() => handleMatches(more), 300); 
-    }else{
-      animating = false;
-      if(!gameOver && movesLeft<=0 && progress<1){
-        showLose();
-      }
-    }
-  }, 500); 
-}
-
-function updateScore(v){
-  score = v;
-  scoreEl.textContent = score;
-}
-
-function updateMoves(){
-  movesEl.textContent = movesLeft;
-  if(movesLeft <= 5) {
-      movesEl.style.color = "#ff0000";
-      movesEl.style.textShadow = "0 0 5px red";
-  } else {
-      movesEl.style.color = "#ff4e4e";
-      movesEl.style.textShadow = "none";
-  }
-}
-
-function updateTargetsUI(){
-  let totalNeeded = 0;
-  let totalDone = 0;
-  for(const key in targets){
-    totalNeeded += targets[key];
-    const done = Math.min(collected[key], targets[key]);
-    totalDone += done;
-    if(targetEls[key]) targetEls[key].textContent = done + "/" + targets[key];
-  }
-  progress = totalNeeded ? totalDone / totalNeeded : 0;
-  updateProgress(progress);
-
-  if(progress >= 1 && !gameOver){
-    setTimeout(() => {
-       showWin();
-    }, 600);
-  }
-}
-
-function updateProgress(p){
-  const percent = Math.round(p * 100);
-  progressText.textContent = percent + "%";
-  if(raceBar && dogeMarker){
-      const maxMove = raceBar.clientWidth - dogeMarker.offsetWidth - 20;
-      dogeMarker.style.transform = `translateX(${maxMove * p}px)`;
-  }
-}
-
-function showWin(){
-  if(gameOver) return;
-  gameOver = true;
-  overlayContent.innerHTML = `
-    <h2>TEBRİKLER! 🏆</h2>
-    <p>Görevi tamamladın!</p>
-    <br>
-    <p style="font-size:16px">Skor: <strong style="color:#ffce3a">${score}</strong></p>
-  `;
-  overlay.style.display = "block";
-}
-
-function showLose(){
-  if(gameOver) return;
-  gameOver = true;
-  overlayContent.innerHTML = `
-    <h2 style="color:#ff4e4e">OYUN BİTTİ 💀</h2>
-    <p>Hamlelerin tükendi.</p>
-    <br>
-    <p>Kalanlar:</p>
-    <p>🔴 ${targets.r - collected.r > 0 ? targets.r - collected.r : 0}</p>
-    <p>🟡 ${targets.y - collected.y > 0 ? targets.y - collected.y : 0}</p>
-  `;
-  overlay.style.display = "block";
-}
-
-function restart(){
-  init();
-}
-
-function resolveBoard(){
-  let more = findMatches();
-  let guard = 0;
-  while(more.length>0 && guard < 50){
-    more.forEach(p=>{ board[p.r][p.c] = randomType(); });
-    more = findMatches();
-    guard++;
-  }
-  refreshVisual();
-}
-
-init();
-</script>
+    <script>
+        // İleride sepete ekle veya sipariş ver gibi butonların işlevleri buraya yazılabilir.
+        console.log("Memoli Piknik Uygulaması Başarıyla Yüklendi!");
+    </script>
 </body>
 </html>
