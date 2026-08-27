@@ -3,345 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memoli Piknik | 1999'dan Beri</title>
+    <title>İyi Geceler Nida Baş</title>
     <style>
-        :root {
-            --primary-color: #ff0000; /* Tam ve Canlı Kırmızı */
-            --secondary-color: #212121; /* Koyu gri */
-            --bg-color: #f5f5f5;
-            --text-color: #333;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Monoton&family=Poppins:wght@300&display=swap');
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Navbar - Beyaz Üstüne Kırmızı Konsept */
-        header {
-            background-color: #ffffff;
-            padding: 1rem 5%;
+            background-color: #020111; /* Derin gece mavisi */
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        nav a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-weight: 700;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: var(--primary-color);
-        }
-
-        /* Hero Section & Slayt Arka Plan */
-        .hero {
-            position: relative;
-            height: 65vh;
-            display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            color: white;
-            padding: 0 20px;
+            height: 100vh;
             overflow: hidden;
-        }
-
-        /* Slayt Gösterisi Ayarları */
-        .slideshow {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
-        }
-
-        .slide {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            animation: fade 16s infinite;
-        }
-
-        /* Arka planı biraz karartarak yazıların okunmasını sağlar */
-        .slide::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.65);
-        }
-
-        /* Slayt Görselleri ve Zamanlamaları (Unsplash'ten kaliteli görseller) */
-        .slide1 { 
-            background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); 
-            animation-delay: 0s; 
-        } /* Mangal */
-        .slide2 { 
-            background-image: url('https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); 
-            animation-delay: 4s; 
-        } /* Şelale */
-        .slide3 { 
-            background-image: url('https://images.unsplash.com/photo-1448375240586-882707db8855?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); 
-            animation-delay: 8s; 
-        } /* Orman / Yeşillik */
-        .slide4 { 
-            background-image: url('https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); 
-            animation-delay: 12s; 
-        } /* Buz gibi içecekler */
-
-        @keyframes fade {
-            0% { opacity: 0; transform: scale(1); }
-            10% { opacity: 1; }
-            25% { opacity: 1; }
-            35% { opacity: 0; transform: scale(1.05); }
-            100% { opacity: 0; }
-        }
-
-        /* Slayt Üzerindeki Yazılar */
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .since {
-            font-size: 1.2rem;
-            color: #ffc107;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-            font-style: italic;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
-        }
-
-        .hero p.slogan {
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            font-weight: 300;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-        }
-
-        .btn {
-            background-color: var(--primary-color);
+            font-family: 'Poppins', sans-serif;
             color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.3s, background 0.3s;
-            display: inline-block;
-            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+            position: relative;
         }
 
-        .btn:hover {
-            background-color: #cc0000;
-            transform: scale(1.05);
-        }
-
-        /* Container & Menu */
+        /* İçerik kutusu */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 50px 20px;
+            z-index: 10;
+            text-align: center;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.2);
+            backdrop-filter: blur(5px);
         }
 
-        .section-title {
-            text-align: center;
+        /* Neon Tabela Efekti */
+        h1 {
+            font-family: 'Monoton', cursive, sans-serif;
+            font-size: 4rem;
+            font-weight: normal;
+            color: #fff;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            text-shadow:
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 20px #ff00de,
+                0 0 40px #ff00de,
+                0 0 80px #ff00de,
+                0 0 90px #ff00de,
+                0 0 100px #ff00de,
+                0 0 150px #ff00de;
+            animation: pulsate 1.5s infinite alternate;
+        }
+
+        /* Alt Yazı Efekti */
+        p.message {
+            font-family: 'Dancing Script', cursive;
             font-size: 2.2rem;
-            margin-bottom: 40px;
-            color: var(--secondary-color);
-            position: relative;
+            line-height: 1.6;
+            color: #e0e0e0;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            margin-top: 10px;
+        }
+
+        /* Neon Nefes Alma Animasyonu */
+        @keyframes pulsate {
+            100% {
+                text-shadow:
+                    0 0 4px #fff,
+                    0 0 11px #fff,
+                    0 0 19px #fff,
+                    0 0 40px #bc13fe,
+                    0 0 80px #bc13fe,
+                    0 0 90px #bc13fe,
+                    0 0 100px #bc13fe,
+                    0 0 150px #bc13fe;
+            }
+            0% {
+                text-shadow:
+                    0 0 2px #fff,
+                    0 0 4px #fff,
+                    0 0 6px #fff,
+                    0 0 10px #bc13fe,
+                    0 0 45px #bc13fe,
+                    0 0 55px #bc13fe,
+                    0 0 70px #bc13fe,
+                    0 0 80px #bc13fe;
+            }
+        }
+
+        /* Yıldızlar için CSS */
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle infinite alternate;
+        }
+
+        /* Yıldız Parlama Animasyonu */
+        @keyframes twinkle {
+            0% { opacity: 0.1; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px white; }
         }
         
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: var(--primary-color);
-            margin: 10px auto 0;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .menu-item {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            text-align: center;
-            transition: transform 0.3s;
-            border-bottom: 4px solid transparent;
-        }
-
-        .menu-item:hover {
-            transform: translateY(-8px);
-            border-bottom: 4px solid var(--primary-color);
-        }
-
-        .menu-item h3 {
-            color: var(--secondary-color);
-            margin-bottom: 12px;
-            font-size: 1.4rem;
-        }
-
-        .menu-item p {
-            color: #666;
-            font-size: 0.95rem;
-        }
-
-        .menu-item .price {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-top: 15px;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--secondary-color);
-            color: #ddd;
-            text-align: center;
-            padding: 40px 20px;
-            margin-top: 20px;
-        }
-        
-        footer h3 {
-            color: white;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        footer p {
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-        }
-
-        /* Mobile Responsive */
+        /* Mobil Uyumluluk */
         @media (max-width: 768px) {
-            nav ul {
-                display: none; 
-            }
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            .hero p.slogan {
-                font-size: 1.1rem;
-            }
+            h1 { font-size: 2.5rem; }
+            p.message { font-size: 1.5rem; }
+            .container { padding: 20px; width: 90%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Üst Menü -->
-    <header>
-        <div class="logo">Memoli Piknik</div>
-        <nav>
-            <ul>
-                <li><a href="#hakkimizda">Hakkımızda</a></li>
-                <li><a href="#menu">Menü</a></li>
-                <li><a href="#iletisim">İletişim</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- Karşılama Alanı & Slayt -->
-    <section class="hero" id="hakkimizda">
-        <!-- Arka Plan Slaytları -->
-        <div class="slideshow">
-            <div class="slide slide1"></div> <!-- Mangal -->
-            <div class="slide slide2"></div> <!-- Şelale -->
-            <div class="slide slide3"></div> <!-- Orman -->
-            <div class="slide slide4"></div> <!-- İçecekler -->
-        </div>
-
-        <!-- Ön Plandaki Yazılar -->
-        <div class="hero-content">
-            <div class="since">Since 1999</div>
-            <h1>Memoli Piknik</h1>
-            <p class="slogan">"Doğanın kalbinde, ateşin ustası... 1999'dan beri değişmeyen lezzet!"</p>
-            <a href="#menu" class="btn">Lezzetleri Keşfet</a>
-        </div>
-    </section>
-
-    <!-- Menü Alanı -->
-    <div class="container" id="menu">
-        <h2 class="section-title">Öne Çıkan Lezzetlerimiz</h2>
-        <div class="menu-grid">
-            <div class="menu-item">
-                <h3>Memoli Özel Karışık Izgara</h3>
-                <p>Kuzu şiş, adana, tavuk kanat ve ızgara köfte. Közlenmiş biber ve domates ile.</p>
-                <div class="price">450 ₺</div>
-            </div>
-            <div class="menu-item">
-                <h3>Kasap Köfte Porsiyon</h3>
-                <p>Özel baharatlarla yoğrulmuş günlük kasap köfte, pilav ve taze yeşillikler eşliğinde.</p>
-                <div class="price">280 ₺</div>
-            </div>
-            <div class="menu-item">
-                <h3>Tavuk Kanat</h3>
-                <p>Özel sosla marine edilmiş mangal ateşinde nar gibi kızarmış kanat.</p>
-                <div class="price">250 ₺</div>
-            </div>
-            <div class="menu-item">
-                <h3>Günün Meze Tabağı</h3>
-                <p>Haydari, acılı ezme, şakşuka ve humus (Günlük taze hazırlanır).</p>
-                <div class="price">150 ₺</div>
-            </div>
-        </div>
+    <div class="container">
+        <h1>İYİ GECELER<br>NİDA BAŞ</h1>
+        <p class="message">
+            Günün tüm yorgunluğu yıldızların ışıltısında kaybolsun.<br>
+            Yarın sabah güneş, yepyeni umutlarla senin için doğsun.<br>
+            Tatlı rüyalar...
+        </p>
     </div>
 
-    <!-- İletişim & Alt Bilgi -->
-    <footer id="iletisim">
-        <h3>Memoli Piknik</h3>
-        <p><strong>Adres:</strong> Kayacı Mahallesi, Doktorun Yeri, Erdemli / Mersin</p>
-        <p><strong>Telefon:</strong> 0555 123 45 67</p>
-        <div style="margin-top: 20px; font-size: 0.9rem; color: #777;">
-            &copy; 2026 Memoli Piknik. Tüm hakları saklıdır.
-        </div>
-    </footer>
+    <script>
+        // Arka plana rastgele yanıp sönen yıldızlar ekleyen JavaScript kodu
+        const starCount = 150; // Gökyüzündeki yıldız sayısı
+        const body = document.querySelector('body');
 
+        for (let i = 0; i < starCount; i++) {
+            let star = document.createElement('div');
+            star.classList.add('star');
+            
+            // Rastgele konum (X ve Y ekseni)
+            let x = Math.random() * window.innerWidth;
+            let y = Math.random() * window.innerHeight;
+            
+            // Rastgele boyut ve animasyon süresi
+            let size = Math.random() * 3;
+            let duration = Math.random() * 3 + 1; // 1 ile 4 saniye arası
+
+            star.style.left = x + 'px';
+            star.style.top = y + 'px';
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.animationDuration = duration + 's';
+
+            body.appendChild(star);
+        }
+
+        // Pencere boyutu değiştiğinde yıldızların taşmasını engellemek için basit bir kontrol
+        window.addEventListener('resize', () => {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach(star => {
+                if (parseFloat(star.style.left) > window.innerWidth || parseFloat(star.style.top) > window.innerHeight) {
+                    star.style.left = Math.random() * window.innerWidth + 'px';
+                    star.style.top = Math.random() * window.innerHeight + 'px';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
