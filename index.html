@@ -3,164 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İyi Geceler Nida Baş</title>
+    <title>İyi Geceler Nida</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Monoton&family=Poppins:wght@300&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Zarif el yazısı ve yumuşak, okunaklı alt metin fontları */
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;400&display=swap');
 
         body {
-            background-color: #020111; /* Derin gece mavisi */
+            margin: 0;
+            padding: 0;
+            /* Merkeze doğru hafif moraran yumuşak gece mavisi arka plan */
+            background: radial-gradient(circle at center, #1b0033 0%, #020111 100%);
+            height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             overflow: hidden;
-            font-family: 'Poppins', sans-serif;
             color: white;
-            position: relative;
         }
 
-        /* İçerik kutusu */
         .container {
-            z-index: 10;
             text-align: center;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(188, 19, 254, 0.2);
-            backdrop-filter: blur(5px);
+            z-index: 10;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
         }
 
-        /* Neon Tabela Efekti */
+        /* Zarif ve Kıvrımlı Neon Başlık */
         h1 {
-            font-family: 'Monoton', cursive, sans-serif;
-            font-size: 4rem;
-            font-weight: normal;
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.8rem;
+            font-weight: 400;
+            margin-bottom: 30px;
             color: #fff;
-            margin-bottom: 25px;
-            text-transform: uppercase;
             text-shadow:
                 0 0 5px #fff,
                 0 0 10px #fff,
-                0 0 20px #ff00de,
-                0 0 40px #ff00de,
-                0 0 80px #ff00de,
-                0 0 90px #ff00de,
-                0 0 100px #ff00de,
-                0 0 150px #ff00de;
-            animation: pulsate 1.5s infinite alternate;
+                0 0 20px #ff66b2,
+                0 0 40px #ff66b2,
+                0 0 80px #ff1a8c,
+                0 0 90px #ff1a8c;
+            animation: soft-pulse 2.5s infinite alternate;
+            line-height: 1.1;
         }
 
-        /* Alt Yazı Efekti */
-        p.message {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.2rem;
-            line-height: 1.6;
-            color: #e0e0e0;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-            margin-top: 10px;
+        /* İsmi biraz daha büyük ve vurgulu yapıyoruz */
+        .name {
+            font-size: 5.5rem;
+            display: block;
+            margin-top: 5px;
         }
 
-        /* Neon Nefes Alma Animasyonu */
-        @keyframes pulsate {
-            100% {
-                text-shadow:
-                    0 0 4px #fff,
-                    0 0 11px #fff,
-                    0 0 19px #fff,
-                    0 0 40px #bc13fe,
-                    0 0 80px #bc13fe,
-                    0 0 90px #bc13fe,
-                    0 0 100px #bc13fe,
-                    0 0 150px #bc13fe;
-            }
+        /* Daha sade ve okunaklı, göz yormayan alt metin */
+        p {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: #e6e6fa; /* Açık lavanta rengi */
+            text-shadow: 0 0 8px rgba(255,255,255,0.4);
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+
+        /* Daha yumuşak nefes alma efekti */
+        @keyframes soft-pulse {
             0% {
                 text-shadow:
                     0 0 2px #fff,
                     0 0 4px #fff,
-                    0 0 6px #fff,
-                    0 0 10px #bc13fe,
-                    0 0 45px #bc13fe,
-                    0 0 55px #bc13fe,
-                    0 0 70px #bc13fe,
-                    0 0 80px #bc13fe;
+                    0 0 10px #ff66b2,
+                    0 0 20px #ff1a8c,
+                    0 0 40px #ff1a8c;
+            }
+            100% {
+                text-shadow:
+                    0 0 5px #fff,
+                    0 0 10px #fff,
+                    0 0 25px #ff66b2,
+                    0 0 50px #ff1a8c,
+                    0 0 90px #ff1a8c;
             }
         }
 
-        /* Yıldızlar için CSS */
+        /* Arka plan yıldızları */
         .star {
             position: absolute;
-            background-color: white;
+            background-color: #fff;
             border-radius: 50%;
             animation: twinkle infinite alternate;
         }
 
-        /* Yıldız Parlama Animasyonu */
         @keyframes twinkle {
             0% { opacity: 0.1; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px white; }
+            100% { opacity: 0.9; transform: scale(1.2); box-shadow: 0 0 6px #fff; }
         }
-        
-        /* Mobil Uyumluluk */
+
+        /* Mobil ekranlar için font boyutlarını küçültme */
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            p.message { font-size: 1.5rem; }
-            .container { padding: 20px; width: 90%; }
+            h1 { font-size: 3.2rem; margin-bottom: 20px; }
+            .name { font-size: 4.5rem; }
+            p { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h1>İYİ GECELER<br>NİDA BAŞ</h1>
-        <p class="message">
-            Günün tüm yorgunluğu yıldızların ışıltısında kaybolsun.<br>
+        <h1>İyi Geceler <span class="name">Nida</span></h1>
+        <p>
+            Günün tüm yorgunluğu yıldızların ışıltısında kaybolsun.<br><br>
             Yarın sabah güneş, yepyeni umutlarla senin için doğsun.<br>
             Tatlı rüyalar...
         </p>
     </div>
 
     <script>
-        // Arka plana rastgele yanıp sönen yıldızlar ekleyen JavaScript kodu
-        const starCount = 150; // Gökyüzündeki yıldız sayısı
+        // Sayfa boyutlarına göre taşma yapmayan yıldız algoritması
+        const starCount = 100;
         const body = document.querySelector('body');
 
         for (let i = 0; i < starCount; i++) {
             let star = document.createElement('div');
             star.classList.add('star');
             
-            // Rastgele konum (X ve Y ekseni)
-            let x = Math.random() * window.innerWidth;
-            let y = Math.random() * window.innerHeight;
+            // % (vw/vh) bazlı konumlandırma ile kaydırma çubuğu çıkmasını engelliyoruz
+            let x = Math.random() * 100;
+            let y = Math.random() * 100;
             
-            // Rastgele boyut ve animasyon süresi
-            let size = Math.random() * 3;
-            let duration = Math.random() * 3 + 1; // 1 ile 4 saniye arası
+            let size = Math.random() * 2 + 0.5;
+            let duration = Math.random() * 3 + 1.5;
+            let delay = Math.random() * 2;
 
-            star.style.left = x + 'px';
-            star.style.top = y + 'px';
+            star.style.left = x + 'vw';
+            star.style.top = y + 'vh';
             star.style.width = size + 'px';
             star.style.height = size + 'px';
             star.style.animationDuration = duration + 's';
+            star.style.animationDelay = delay + 's'; // Yıldızların hepsi aynı anda yanıp sönmesin diye gecikme
 
             body.appendChild(star);
         }
-
-        // Pencere boyutu değiştiğinde yıldızların taşmasını engellemek için basit bir kontrol
-        window.addEventListener('resize', () => {
-            const stars = document.querySelectorAll('.star');
-            stars.forEach(star => {
-                if (parseFloat(star.style.left) > window.innerWidth || parseFloat(star.style.top) > window.innerHeight) {
-                    star.style.left = Math.random() * window.innerWidth + 'px';
-                    star.style.top = Math.random() * window.innerHeight + 'px';
-                }
-            });
-        });
     </script>
 </body>
 </html>
