@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Babypeacock Race - GTA Neon</title>
     <style>
-        /* Retro/Neon fontunu Google'dan çekiyoruz */
         @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
 
         body, html {
@@ -15,10 +14,10 @@
             height: 100%;
             background-color: #0a0a0a;
             overflow: hidden;
-            touch-action: none; /* Mobilde ekranın kaymasını engeller */
+            touch-action: none; 
         }
 
-        /* GTA Vice City Tarzı Hareketli 3D Neon Izgara */
+        /* Arka Plan Izgarası (Mavi-Yeşil Uyumu) */
         .neon-grid {
             position: absolute;
             width: 200%;
@@ -26,8 +25,8 @@
             bottom: -50%;
             left: -50%;
             background-image: 
-                linear-gradient(rgba(255, 0, 255, 0.4) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.4) 2px, transparent 2px);
+                linear-gradient(rgba(0, 255, 150, 0.4) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 200, 255, 0.4) 2px, transparent 2px);
             background-size: 60px 60px;
             transform: perspective(600px) rotateX(70deg);
             animation: moveGrid 3s linear infinite;
@@ -39,46 +38,44 @@
             100% { transform: perspective(600px) rotateX(70deg) translateY(60px); }
         }
 
-        /* Neon Başlık Yazısı */
+        /* Mobil Uyumlu Mavi-Yeşil Yazı */
         .neon-title {
             position: absolute;
-            top: 10%;
+            top: 12%;
             width: 100%;
             text-align: center;
             font-family: 'Monoton', cursive;
-            font-size: 45px;
-            color: #fff;
+            /* Mobilde küçülen, PC'de büyüyen dinamik font */
+            font-size: clamp(35px, 12vw, 65px); 
+            line-height: 1.2;
+            color: #00ffcc; /* Mavi-Yeşil (Cyan) */
             text-shadow: 
-                0 0 5px #fff,
-                0 0 10px #fff,
-                0 0 20px #00ffff,
-                0 0 40px #00ffff,
-                0 0 80px #00ffff;
+                0 0 5px #00ffcc,
+                0 0 10px #00ffcc,
+                0 0 20px #0088ff,
+                0 0 40px #0088ff,
+                0 0 80px #00ff00; /* Dışa doğru yeşil parlama */
             z-index: 10;
         }
 
         /* Kuş Karakteri */
         #player {
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             left: 50%;
-            top: 70%;
+            top: 65%;
             transform: translate(-50%, -50%);
-            /* Senin dosya adın! */
             background-image: url('drXH10s8.jpg'); 
             background-size: cover;
             background-position: center;
-            
-            /* MUHTEŞEM DETAY: Siyah arkaplanı şeffaf yapar ve kuşu parlatır */
             mix-blend-mode: screen; 
-            filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.8));
-            
+            /* Kuşun etrafındaki parlama da mavi-yeşil yapıldı */
+            filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.8)); 
             z-index: 20;
             pointer-events: none;
         }
 
-        /* Etkileşim Alanı */
         #joystick-zone {
             position: absolute;
             top: 0; left: 0;
@@ -89,16 +86,13 @@
 </head>
 <body>
 
-    <!-- Üstteki Neon Yazı -->
-    <div class="neon-title">BABYPEACOCK RACE</div>
+    <!-- Yazıyı alt alta bölmek için <br> eklendi -->
+    <div class="neon-title">BABYPEACOCK<br>RACE</div>
     
-    <!-- Hareketli Alt Zemin -->
     <div class="neon-grid"></div>
     
-    <!-- Senin Kuş Logon -->
     <div id="player"></div>
     
-    <!-- Tıklama/Dokunma Algılayıcı -->
     <div id="joystick-zone"></div>
 
     <script>
@@ -106,12 +100,12 @@
         const zone = document.getElementById('joystick-zone');
         
         let posX = window.innerWidth / 2;
-        let posY = window.innerHeight * 0.7;
+        let posY = window.innerHeight * 0.65;
         let targetX = posX;
         let targetY = posY;
         let isMoving = false;
         
-        const speed = 6; // Kuşun hızı
+        const speed = 6; 
 
         function setTarget(e) {
             isMoving = true;
@@ -124,7 +118,6 @@
             }
         }
 
-        // Fare ve Dokunmatik Kontroller
         zone.addEventListener('mousedown', setTarget);
         zone.addEventListener('mousemove', (e) => { if(isMoving) setTarget(e); });
         zone.addEventListener('mouseup', () => isMoving = false);
@@ -133,21 +126,18 @@
         zone.addEventListener('touchmove', setTarget);
         zone.addEventListener('touchend', () => isMoving = false);
 
-        // Oyun Döngüsü
         function gameLoop() {
             if (isMoving) {
                 const dx = targetX - posX;
                 const dy = targetY - posY;
                 const dist = Math.hypot(dx, dy);
                 
-                // Hedefe doğru akıcı hareket
                 if (dist > speed) {
                     posX += (dx / dist) * speed;
                     posY += (dy / dist) * speed;
                 }
             }
             
-            // Kuşun pozisyonunu güncelle
             player.style.left = posX + 'px';
             player.style.top = posY + 'px';
 
