@@ -13,7 +13,6 @@ user-scalable=no">
 
 <title>BABYPEACOCK</title>
 
-
 <style>
 
 /* =========================
@@ -28,32 +27,18 @@ user-scalable=no">
 
 html,
 body{
-
     width:100%;
     height:100%;
-
     overflow:hidden;
-
     background:#000;
-
-    font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
 }
 
-
 body{
-
     position:relative;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 
@@ -62,269 +47,198 @@ body{
 ========================= */
 
 #scene{
-
     position:absolute;
-
     inset:0;
-
     overflow:hidden;
 
     background:
+        radial-gradient(
+            circle at 50% 46%,
+            rgba(0,255,120,.09),
+            transparent 28%
+        ),
 
-    radial-gradient(
-        circle at 50% 47%,
-        rgba(0,255,120,.07),
-        transparent 35%
-    ),
+        radial-gradient(
+            circle at 50% 48%,
+            rgba(0,150,255,.06),
+            transparent 48%
+        ),
 
-    radial-gradient(
-        circle at 50% 50%,
-        rgba(0,150,255,.05),
-        #000 70%
-    );
-
+        #000;
 }
 
 
 /* =========================
-   HAREKETLİ PARÇACIK
+   PARÇACIKLAR
 ========================= */
 
 .particle{
-
     position:absolute;
-
     border-radius:50%;
-
-    animation:
-    particleMove linear infinite;
-
+    animation:particleMove linear infinite;
 }
-
 
 .particle.blue{
-
     background:#00bfff;
-
-    box-shadow:
-    0 0 6px #00bfff;
-
+    box-shadow:0 0 6px #00bfff;
 }
-
 
 .particle.green{
-
     background:#00ff66;
-
-    box-shadow:
-    0 0 6px #00ff66;
-
+    box-shadow:0 0 6px #00ff66;
 }
-
 
 @keyframes particleMove{
 
     0%{
-
-        transform:
-        translateY(50px);
-
+        transform:translateY(40px);
         opacity:0;
-
     }
 
     25%{
-
         opacity:.8;
-
     }
 
     100%{
-
-        transform:
-        translateY(-150px);
-
+        transform:translateY(-150px);
         opacity:0;
-
     }
-
 }
 
 
 /* =========================
-   HIZ ÇİZGİLERİ
+   NEON HIZ ÇİZGİLERİ
 ========================= */
 
 .speedLine{
-
     position:absolute;
-
     height:2px;
-
     border-radius:20px;
-
-    animation:
-    speedMove linear infinite;
-
+    animation:speedMove linear infinite;
 }
 
-
 .speedLine.blue{
-
     background:#008cff;
 
     box-shadow:
-
-    0 0 5px #008cff,
-
-    0 0 12px
-    rgba(0,140,255,.6);
-
+        0 0 5px #008cff,
+        0 0 10px rgba(0,140,255,.55);
 }
-
 
 .speedLine.green{
-
-    background:#00dd55;
+    background:#00d94f;
 
     box-shadow:
-
-    0 0 5px #00dd55,
-
-    0 0 12px
-    rgba(0,220,85,.6);
-
+        0 0 5px #00d94f,
+        0 0 10px rgba(0,220,80,.55);
 }
-
 
 @keyframes speedMove{
 
     from{
-
-        transform:
-        translateX(-130vw);
-
+        transform:translateX(-130vw);
     }
 
     to{
-
-        transform:
-        translateX(230vw);
-
+        transform:translateX(230vw);
     }
-
 }
 
 
 /* =========================
-   ANA İÇERİK
+   ANA ALAN
 ========================= */
 
 .content{
-
     position:relative;
-
     z-index:10;
 
     width:100%;
 
     display:flex;
-
     flex-direction:column;
 
+    justify-content:center;
     align-items:center;
 
-    justify-content:center;
-
     padding:0 12px;
-
 }
 
 
 /* =========================
-   KUŞ
+   TAVUS KUŞU
 ========================= */
 
 .peacock{
-
-    display:block;
 
     width:min(58vw,330px);
 
     height:auto;
 
+    display:block;
+
     object-fit:contain;
 
+
     /*
-       ÖNEMLİ:
+       ÖNEMLİ KISIM:
 
-       JPG içerisindeki siyah alanı
-       arka planla birleştirir.
+       JPG içindeki siyah renk,
+       arka plandan daha koyu olduğu için
+       LIGHTEN modu siyahı göstermiyor.
 
-       Böylece siyah kare yerine
-       esas olarak kuş görünür.
+       Renkli kuş görünmeye devam ediyor.
     */
 
-    mix-blend-mode:screen;
+    mix-blend-mode:lighten;
+
 
     /*
-       Kuşun renklerini
-       biraz güçlendiriyoruz
+       Rectangle oluşturan
+       drop-shadow YOK.
     */
 
     filter:
-
-    brightness(1.20)
-
-    contrast(1.15)
-
-    saturate(1.20)
-
-    drop-shadow(
-        0 0 5px
-        rgba(0,170,255,.30)
-    )
-
-    drop-shadow(
-        0 0 9px
-        rgba(0,255,100,.20)
-    );
+        saturate(1.15)
+        contrast(1.08)
+        brightness(1.05);
 
 
-    margin-bottom:16px;
+    margin-bottom:22px;
+
 
     animation:
-    birdBreath 4s
-    ease-in-out infinite;
-
+        birdFloat
+        4s
+        ease-in-out
+        infinite;
 }
 
 
-@keyframes birdBreath{
+@keyframes birdFloat{
 
     0%,
     100%{
-
         transform:
-        scale(1);
-
+            translateY(0)
+            scale(1);
     }
 
     50%{
-
         transform:
-        scale(1.025);
-
+            translateY(-5px)
+            scale(1.02);
     }
-
 }
 
 
 /* =========================
-   BABYPEACOCK
+   BABYPEACOCK LOGO
 ========================= */
 
 .logo{
+
+    position:relative;
 
     width:100%;
 
@@ -333,65 +247,46 @@ body{
     white-space:nowrap;
 
     font-size:
-    clamp(
-        25px,
-        7.4vw,
-        72px
-    );
+        clamp(
+            25px,
+            7.3vw,
+            72px
+        );
 
     font-weight:900;
 
-    letter-spacing:.025em;
-
-    line-height:1.05;
+    letter-spacing:.02em;
 
 
     background:
+        linear-gradient(
+            90deg,
 
-    linear-gradient(
+            #009cff,
 
-        90deg,
+            #00dcff,
 
-        #009cff 0%,
+            #00ff9d,
 
-        #00d9ff 35%,
-
-        #00ff99 68%,
-
-        #41ff45 100%
-
-    );
+            #45ff45
+        );
 
 
     -webkit-background-clip:text;
 
     background-clip:text;
 
-    -webkit-text-fill-color:
-    transparent;
+    -webkit-text-fill-color:transparent;
 
-
-    /*
-       Hafif neon.
-       Yazı bulanıklaşmasın.
-    */
 
     text-shadow:
-
-    0 0 2px
-    rgba(0,190,255,.9),
-
-    0 0 6px
-    rgba(0,255,120,.45);
-
-
-    position:relative;
-
+        0 0 2px rgba(0,200,255,.9),
+        0 0 6px rgba(0,255,120,.45);
 }
 
 
 /* =========================
-   LOGO IŞIK TARAMASI
+   LOGO ÜZERİNDEN IŞIK
 ========================= */
 
 .logo::after{
@@ -400,76 +295,65 @@ body{
 
     position:absolute;
 
-    top:-20%;
+    top:-25%;
 
-    left:-40%;
+    left:-35%;
 
-    width:18%;
+    width:16%;
 
-    height:140%;
+    height:150%;
 
 
     background:
 
-    linear-gradient(
+        linear-gradient(
+            90deg,
 
-        90deg,
+            transparent,
 
-        transparent,
+            rgba(255,255,255,.75),
 
-        rgba(255,255,255,.75),
-
-        transparent
-
-    );
+            transparent
+        );
 
 
     transform:
-    skewX(-20deg);
+        skewX(-20deg);
+
 
     filter:
-    blur(3px);
+        blur(2px);
+
 
     animation:
-    scanLogo 5s
-    ease-in-out infinite;
-
+        logoScan
+        5s
+        ease-in-out
+        infinite;
 }
 
 
-@keyframes scanLogo{
+@keyframes logoScan{
 
     0%,
     20%{
-
-        left:-40%;
-
+        left:-35%;
         opacity:0;
-
     }
 
     30%{
-
         opacity:.8;
-
     }
 
     60%{
-
         left:120%;
-
         opacity:0;
-
     }
 
     100%{
-
         left:120%;
-
         opacity:0;
-
     }
-
 }
 
 
@@ -479,44 +363,40 @@ body{
 
 .sloganBox{
 
-    height:28px;
+    margin-top:18px;
 
-    margin-top:15px;
+    height:25px;
 
     display:flex;
 
     justify-content:center;
 
     align-items:center;
-
 }
 
 
 #slogan{
 
-    color:#84dfff;
-
     font-family:
-
-    "Courier New",
-    monospace;
+        "Courier New",
+        monospace;
 
     font-size:
-    clamp(
-        10px,
-        2.5vw,
-        15px
-    );
+        clamp(
+            10px,
+            2.3vw,
+            15px
+        );
 
-    letter-spacing:.22em;
+    letter-spacing:.20em;
+
+    color:#88ddff;
 
     white-space:nowrap;
 
     text-shadow:
-
-    0 0 5px
-    rgba(0,180,255,.65);
-
+        0 0 5px
+        rgba(0,180,255,.55);
 }
 
 
@@ -535,31 +415,26 @@ body{
     background:#00ff88;
 
     box-shadow:
-    0 0 5px #00ff88;
+        0 0 5px #00ff88;
 
     animation:
-    cursorBlink .7s
-    infinite;
-
+        blink
+        .65s
+        infinite;
 }
 
 
-@keyframes cursorBlink{
+@keyframes blink{
 
     0%,
-    45%{
-
+    48%{
         opacity:1;
-
     }
 
-    46%,
+    49%,
     100%{
-
         opacity:0;
-
     }
-
 }
 
 
@@ -579,78 +454,61 @@ body{
 
     height:25%;
 
-    opacity:.12;
+
+    opacity:.10;
 
 
     transform:
-
-    perspective(350px)
-
-    rotateX(62deg);
+        perspective(350px)
+        rotateX(65deg);
 
 
     transform-origin:
-    center bottom;
+        center bottom;
 
 
     background-image:
 
-    linear-gradient(
+        linear-gradient(
+            rgba(0,255,100,.6)
+            1px,
+            transparent 1px
+        ),
 
-        rgba(0,255,100,.6)
-        1px,
-
-        transparent 1px
-
-    ),
-
-    linear-gradient(
-
-        90deg,
-
-        rgba(0,150,255,.6)
-        1px,
-
-        transparent 1px
-
-    );
+        linear-gradient(
+            90deg,
+            rgba(0,150,255,.6)
+            1px,
+            transparent 1px
+        );
 
 
     background-size:
-
-    100% 32px,
-
-    48px 100%;
+        100% 32px,
+        48px 100%;
 
 
     animation:
-
-    gridMove
-    2.5s
-    linear
-    infinite;
-
+        gridMove
+        2.5s
+        linear
+        infinite;
 }
 
 
 @keyframes gridMove{
 
     from{
-
         background-position:
-        0 0,
-        0 0;
-
+            0 0,
+            0 0;
     }
 
     to{
-
         background-position:
-        0 32px,
-        0 0;
-
+            0 32px,
+            0 0;
     }
-
 }
 
 
@@ -661,33 +519,19 @@ body{
 @media(max-width:420px){
 
     .peacock{
-
         width:55vw;
-
-        max-width:280px;
-
+        max-width:285px;
     }
-
 
     .logo{
-
-        font-size:7.2vw;
-
-        letter-spacing:.015em;
-
+        font-size:7.15vw;
     }
-
 
     #slogan{
-
-        font-size:2.35vw;
-
+        font-size:2.25vw;
         letter-spacing:.18em;
-
     }
-
 }
-
 
 </style>
 
@@ -704,22 +548,18 @@ body{
 </div>
 
 
-<!-- =====================
-     ANA İÇERİK
-===================== -->
-
 <div class="content">
 
 
     <!-- KUŞ -->
 
     <img
-    src="drXH10s8.jpg"
-    class="peacock"
-    alt="Babypeacock">
+        src="drXH10s8.jpg"
+        class="peacock"
+        alt="Babypeacock">
 
 
-    <!-- BABYPEACOCK -->
+    <!-- LOGO -->
 
     <div class="logo">
 
@@ -728,7 +568,7 @@ body{
     </div>
 
 
-    <!-- DAKTİLO SLOGAN -->
+    <!-- SLOGAN -->
 
     <div class="sloganBox">
 
@@ -742,7 +582,6 @@ body{
 </div>
 
 
-
 <script>
 
 
@@ -754,179 +593,106 @@ const scene =
 document.getElementById("scene");
 
 
-/* =========================
-   HIZ ÇİZGİLERİ
-========================= */
+/* HIZ ÇİZGİLERİ */
 
-for(
-    let i=0;
-    i<35;
-    i++
-){
+for(let i=0;i<30;i++){
 
     const line =
     document.createElement("div");
 
 
     line.className =
-
-    "speedLine " +
-
-    (
-        i % 2 === 0
-        ? "blue"
-        : "green"
-    );
+        "speedLine " +
+        (
+            i%2===0
+            ? "blue"
+            : "green"
+        );
 
 
     line.style.top =
-
-    Math.random()
-    *100
-    +"%";
+        Math.random()*100+"%";
 
 
     line.style.left =
-
-    (
-        -400
-        -
-        Math.random()*500
-    )
-
-    +"px";
+        (-400-Math.random()*500)+"px";
 
 
     line.style.width =
-
-    (
-        60
-        +
-        Math.random()*250
-    )
-
-    +"px";
+        (60+Math.random()*250)+"px";
 
 
     line.style.opacity =
-
-    (
-        .25
-        +
-        Math.random()*.55
-    );
+        (.20+Math.random()*.55);
 
 
     line.style.animationDuration =
-
-    (
-        4
-        +
-        Math.random()*6
-    )
-
-    +"s";
+        (4+Math.random()*7)+"s";
 
 
     line.style.animationDelay =
-
-    (
-        -
-        Math.random()*10
-    )
-
-    +"s";
+        (-Math.random()*10)+"s";
 
 
     scene.appendChild(line);
-
 }
 
 
 /* =========================
-   PARÇACIKLAR
+   PARÇACIK
 ========================= */
 
-for(
-    let i=0;
-    i<60;
-    i++
-){
+for(let i=0;i<60;i++){
 
-    const p =
+    const particle =
     document.createElement("div");
 
 
-    p.className =
-
-    "particle " +
-
-    (
-        i % 2 === 0
-        ? "blue"
-        : "green"
-    );
+    particle.className =
+        "particle " +
+        (
+            i%2===0
+            ? "blue"
+            : "green"
+        );
 
 
     const size =
-
-    1
-    +
-    Math.random()*3;
+        1+Math.random()*3;
 
 
-    p.style.width =
-    size+"px";
+    particle.style.width =
+        size+"px";
 
-    p.style.height =
-    size+"px";
-
-
-    p.style.left =
-
-    Math.random()
-    *100
-    +"%";
+    particle.style.height =
+        size+"px";
 
 
-    p.style.top =
-
-    Math.random()
-    *100
-    +"%";
+    particle.style.left =
+        Math.random()*100+"%";
 
 
-    p.style.animationDuration =
-
-    (
-        5
-        +
-        Math.random()*8
-    )
-
-    +"s";
+    particle.style.top =
+        Math.random()*100+"%";
 
 
-    p.style.animationDelay =
-
-    (
-        -
-        Math.random()*10
-    )
-
-    +"s";
+    particle.style.animationDuration =
+        (5+Math.random()*8)+"s";
 
 
-    scene.appendChild(p);
+    particle.style.animationDelay =
+        (-Math.random()*10)+"s";
 
+
+    scene.appendChild(particle);
 }
 
 
 /* =========================
-   DAKTİLO EFEKTİ
+   DAKTİLO
 ========================= */
 
-const sloganText =
+const text =
 "FROM FEATHER TO FLIGHT";
 
 
@@ -934,31 +700,21 @@ const slogan =
 document.getElementById("slogan");
 
 
-let letter = 0;
+let index=0;
 
 
-/*
-   Harfleri tek tek yaz
-*/
+function writeText(){
 
-function typeWriter(){
-
-    if(
-        letter
-        <
-        sloganText.length
-    ){
+    if(index < text.length){
 
         slogan.textContent +=
-        sloganText.charAt(letter);
+            text.charAt(index);
 
-
-        letter++;
-
+        index++;
 
         setTimeout(
-            typeWriter,
-            115
+            writeText,
+            120
         );
 
     }
@@ -966,43 +722,27 @@ function typeWriter(){
     else{
 
         /*
-           Yazı tamamlanınca
-           biraz bekle
+           Tam yazıldıktan sonra
+           4 saniye bekle
         */
 
         setTimeout(
-
             eraseText,
-
-            3500
-
+            4000
         );
-
     }
-
 }
 
 
-/*
-   Sonra tekrar başlamak için
-   harfleri geriye doğru sil
-*/
-
 function eraseText(){
 
-    if(
-        slogan.textContent.length
-        >
-        0
-    ){
+    if(slogan.textContent.length > 0){
 
         slogan.textContent =
-
-        slogan.textContent.slice(
-            0,
-            -1
-        );
-
+            slogan.textContent.slice(
+                0,
+                -1
+            );
 
         setTimeout(
             eraseText,
@@ -1013,26 +753,20 @@ function eraseText(){
 
     else{
 
-        letter=0;
-
+        index=0;
 
         setTimeout(
-            typeWriter,
-            700
+            writeText,
+            800
         );
-
     }
-
 }
 
 
-/*
-   Sayfa açıldıktan sonra
-   daktilo başlasın
-*/
+/* Başlat */
 
 setTimeout(
-    typeWriter,
+    writeText,
     900
 );
 
