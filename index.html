@@ -2,125 +2,267 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
 
 <title>BABYPEACOCK</title>
 
 <style>
+
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 html,body{
-width:100%;
-height:100%;
-overflow:hidden;
-background:#000;
-font-family:Arial,Helvetica,sans-serif;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
 }
 
 body{
-display:flex;
-justify-content:center;
-align-items:center;
-position:relative;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
-/* Hareketli arka plan */
-#bg{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-overflow:hidden;
+
+/* =========================
+   NEON ARKA PLAN
+   ========================= */
+
+#background{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(0,180,100,0.08) 0%,
+            rgba(0,0,0,0) 55%
+        );
 }
 
-.line{
-position:absolute;
-height:2px;
-border-radius:10px;
-animation:move linear infinite;
-opacity:.9;
+
+/* Hareket eden ışıklar */
+
+.light{
+    position:absolute;
+    height:3px;
+    border-radius:5px;
+
+    animation-name:moveLight;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
 }
 
-.line:nth-child(odd){
-background:#00ff66;
-box-shadow:0 0 10px #00ff66,
-0 0 25px #00ff66;
+
+/* Mavi */
+
+.light.blue{
+    background:#00aaff;
+
+    box-shadow:
+        0 0 6px #00aaff,
+        0 0 14px rgba(0,170,255,.65);
 }
 
-.line:nth-child(even){
-background:#00bfff;
-box-shadow:0 0 10px #00bfff,
-0 0 25px #00bfff;
+
+/* Yeşil */
+
+.light.green{
+    background:#00e64d;
+
+    box-shadow:
+        0 0 6px #00e64d,
+        0 0 14px rgba(0,230,77,.65);
 }
 
-@keyframes move{
-0%{
-transform:translateX(-150%);
-}
-100%{
-transform:translateX(250%);
-}
+
+@keyframes moveLight{
+
+    0%{
+        transform:translateX(-120vw);
+    }
+
+    100%{
+        transform:translateX(220vw);
+    }
+
 }
 
-/* Yazı */
-.title{
-position:relative;
-z-index:2;
-width:95%;
-text-align:center;
 
-font-size:clamp(32px,9vw,80px);
-font-weight:900;
-letter-spacing:.08em;
+/* =========================
+   BABYPEACOCK YAZISI
+   ========================= */
 
-background:linear-gradient(90deg,#00bfff,#00ff66);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+.logo{
 
-text-shadow:
-0 0 8px #00bfff,
-0 0 16px #00bfff,
-0 0 32px #00ff66,
-0 0 60px #00ff66;
+    position:relative;
+    z-index:5;
+
+    width:100%;
+
+    /* Ekranın tamamına güvenli şekilde sığdır */
+    padding:0 10px;
+
+    text-align:center;
+
+    white-space:nowrap;
+
+    /*
+       Telefon ekranına göre otomatik küçülür.
+       Böylece K kesinlikle kesilmez.
+    */
+    font-size:clamp(24px, 8.2vw, 72px);
+
+    font-weight:900;
+
+    letter-spacing:0.025em;
+
+    line-height:1;
+
+    /* Mavi → yeşil */
+    background:linear-gradient(
+        90deg,
+        #00aaff 0%,
+        #00d9ff 35%,
+        #00ff88 70%,
+        #55ff33 100%
+    );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+
+    /*
+       Daha NET neon.
+       Önceki kadar fazla blur yok.
+    */
+    text-shadow:
+        0 0 3px rgba(0,190,255,.9),
+        0 0 8px rgba(0,255,120,.65);
+
 }
+
+
+/* Küçük ekranlarda biraz daha küçült */
+
+@media(max-width:400px){
+
+    .logo{
+        font-size:7.6vw;
+        letter-spacing:0.015em;
+        padding:0 5px;
+
+        text-shadow:
+            0 0 3px rgba(0,190,255,.9),
+            0 0 7px rgba(0,255,120,.6);
+    }
+
+}
+
+
+/* Çok dar telefonlar */
+
+@media(max-width:350px){
+
+    .logo{
+        font-size:7.2vw;
+        letter-spacing:0;
+    }
+
+}
+
 </style>
-
 </head>
+
 
 <body>
 
-<div id="bg"></div>
 
-<div class="title">
-BABYPEACOCK
+<!-- Arka plan ışıkları -->
+
+<div id="background"></div>
+
+
+<!-- Logo -->
+
+<div class="logo">
+    BABYPEACOCK
 </div>
+
 
 <script>
 
-const bg=document.getElementById("bg");
+const background =
+    document.getElementById("background");
 
-for(let i=0;i<80;i++){
 
-const line=document.createElement("div");
+/*
+   Neon ışıkları oluştur
+*/
 
-line.className="line";
+for(let i = 0; i < 55; i++){
 
-line.style.top=Math.random()*100+"%";
+    const light =
+        document.createElement("div");
 
-line.style.width=(80+Math.random()*260)+"px";
+    light.classList.add("light");
 
-line.style.left=(-300-Math.random()*600)+"px";
 
-line.style.animationDuration=(2+Math.random()*4)+"s";
+    /* Mavi / yeşil */
 
-line.style.animationDelay=(-Math.random()*5)+"s";
+    if(i % 2 === 0){
 
-bg.appendChild(line);
+        light.classList.add("blue");
+
+    }else{
+
+        light.classList.add("green");
+
+    }
+
+
+    /* Rastgele dikey konum */
+
+    light.style.top =
+        Math.random() * 100 + "%";
+
+
+    /* Rastgele uzunluk */
+
+    light.style.width =
+        (70 + Math.random() * 300) + "px";
+
+
+    /* Başlangıç konumu */
+
+    light.style.left =
+        (-300 - Math.random() * 500) + "px";
+
+
+    /* Hız */
+
+    light.style.animationDuration =
+        (3 + Math.random() * 5) + "s";
+
+
+    /* Rastgele başlangıç zamanı */
+
+    light.style.animationDelay =
+        (-Math.random() * 8) + "s";
+
+
+    background.appendChild(light);
 
 }
 
