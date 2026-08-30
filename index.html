@@ -3,113 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobil GTA Test</title>
+    <title>Babypeacock Race - GTA Neon</title>
     <style>
-        /* touch-action: none; mobilde ekranın aşağı kaymasını engeller */
-        body { margin: 0; overflow: hidden; background: #222; touch-action: none; }
-        canvas { display: block; }
+        /* Retro/Neon fontunu Google'dan çekiyoruz */
+        @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0a0a0a;
+            overflow: hidden;
+            touch-action: none; /* Mobilde ekranın kaymasını engeller */
+        }
+
+        /* GTA Vice City Tarzı Hareketli 3D Neon Izgara */
+        .neon-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            bottom: -50%;
+            left: -50%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 255, 0.4) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.4) 2px, transparent 2px);
+            background-size: 60px 60px;
+            transform: perspective(600px) rotateX(70deg);
+            animation: moveGrid 3s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: perspective(600px) rotateX(70deg) translateY(0); }
+            100% { transform: perspective(600px) rotateX(70deg) translateY(60px); }
+        }
+
+        /* Neon Başlık Yazısı */
+        .neon-title {
+            position: absolute;
+            top: 10%;
+            width: 100%;
+            text-align: center;
+            font-family: 'Monoton', cursive;
+            font-size: 45px;
+            color: #fff;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 20px #00ffff,
+                0 0 40px #00ffff,
+                0 0 80px #00ffff;
+            z-index: 10;
+        }
+
+        /* Kuş Karakteri */
+        #player {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            left: 50%;
+            top: 70%;
+            transform: translate(-50%, -50%);
+            /* Senin dosya adın! */
+            background-image: url('drXH10s8.jpg'); 
+            background-size: cover;
+            background-position: center;
+            
+            /* MUHTEŞEM DETAY: Siyah arkaplanı şeffaf yapar ve kuşu parlatır */
+            mix-blend-mode: screen; 
+            filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.8));
+            
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        /* Etkileşim Alanı */
+        #joystick-zone {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 30;
+        }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
+
+    <!-- Üstteki Neon Yazı -->
+    <div class="neon-title">BABYPEACOCK RACE</div>
     
+    <!-- Hareketli Alt Zemin -->
+    <div class="neon-grid"></div>
+    
+    <!-- Senin Kuş Logon -->
+    <div id="player"></div>
+    
+    <!-- Tıklama/Dokunma Algılayıcı -->
+    <div id="joystick-zone"></div>
+
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const player = document.getElementById('player');
+        const zone = document.getElementById('joystick-zone');
+        
+        let posX = window.innerWidth / 2;
+        let posY = window.innerHeight * 0.7;
+        let targetX = posX;
+        let targetY = posY;
+        let isMoving = false;
+        
+        const speed = 6; // Kuşun hızı
 
-        const playerImg = new Image();
-        playerImg.src = 'drXH10s8.jpg'; // Bunu PNG yaparsan siyah kare kaybolur
+        function setTarget(e) {
+            isMoving = true;
+            if(e.touches) {
+                targetX = e.touches[0].clientX;
+                targetY = e.touches[0].clientY;
+            } else {
+                targetX = e.clientX;
+                targetY = e.clientY;
+            }
+        }
 
-        const player = { x: canvas.width / 2, y: canvas.height / 2, size: 64, speed: 3, angle: 0 };
-        const target = { x: 0, y: 0, active: false };
-        const bullets = [];
+        // Fare ve Dokunmatik Kontroller
+        zone.addEventListener('mousedown', setTarget);
+        zone.addEventListener('mousemove', (e) => { if(isMoving) setTarget(e); });
+        zone.addEventListener('mouseup', () => isMoving = false);
 
-        // Ekrana Dokunma: Hedefi belirle, yürü ve ateş et
-        window.addEventListener('touchstart', e => {
-            target.x = e.touches[0].clientX;
-            target.y = e.touches[0].clientY;
-            target.active = true;
-            
-            // Dokunulan yöne mermi fırlat
-            player.angle = Math.atan2(target.y - player.y, target.x - player.x);
-            bullets.push({
-                x: player.x, 
-                y: player.y,
-                vx: Math.cos(player.angle) * 12, // Mermi hızı
-                vy: Math.sin(player.angle) * 12
-            });
-        });
+        zone.addEventListener('touchstart', setTarget);
+        zone.addEventListener('touchmove', setTarget);
+        zone.addEventListener('touchend', () => isMoving = false);
 
-        // Parmağı Sürükleme: Karakter parmağı takip etsin
-        window.addEventListener('touchmove', e => {
-            target.x = e.touches[0].clientX;
-            target.y = e.touches[0].clientY;
-            player.angle = Math.atan2(target.y - player.y, target.x - player.x);
-        });
-
-        // Parmağı Çekme: Yürümeyi durdur
-        window.addEventListener('touchend', () => {
-            target.active = false;
-        });
-
-        function update() {
-            // Yürüme Fiziği
-            if (target.active) {
-                const dx = target.x - player.x;
-                const dy = target.y - player.y;
+        // Oyun Döngüsü
+        function gameLoop() {
+            if (isMoving) {
+                const dx = targetX - posX;
+                const dy = targetY - posY;
                 const dist = Math.hypot(dx, dy);
                 
-                if (dist > 10) { // Hedefe çok yakınsa titrememesi için
-                    player.x += (dx / dist) * player.speed;
-                    player.y += (dy / dist) * player.speed;
+                // Hedefe doğru akıcı hareket
+                if (dist > speed) {
+                    posX += (dx / dist) * speed;
+                    posY += (dy / dist) * speed;
                 }
             }
-
-            // Mermi Fiziği
-            for (let i = bullets.length - 1; i >= 0; i--) {
-                bullets[i].x += bullets[i].vx;
-                bullets[i].y += bullets[i].vy;
-                
-                // Ekrandan çıkan mermileri sil
-                if (bullets[i].x < 0 || bullets[i].x > canvas.width || bullets[i].y < 0 || bullets[i].y > canvas.height) {
-                    bullets.splice(i, 1);
-                }
-            }
-        }
-
-        function draw() {
-            // Arka planı temizle
-            ctx.fillStyle = '#1e1e1e';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Mermileri çiz
-            ctx.fillStyle = '#f1c40f'; // Sarı mermiler
-            bullets.forEach(b => {
-                ctx.beginPath();
-                ctx.arc(b.x, b.y, 5, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Oyuncuyu (Kuşu) çiz
-            ctx.save();
-            ctx.translate(player.x, player.y);
-            ctx.rotate(player.angle + Math.PI / 2);
             
-            if (playerImg.complete) {
-                ctx.drawImage(playerImg, -player.size / 2, -player.size / 2, player.size, player.size);
-            }
-            ctx.restore();
+            // Kuşun pozisyonunu güncelle
+            player.style.left = posX + 'px';
+            player.style.top = posY + 'px';
+
+            requestAnimationFrame(gameLoop);
         }
 
-        function loop() {
-            update();
-            draw();
-            requestAnimationFrame(loop);
-        }
-
-        loop();
+        gameLoop();
     </script>
 </body>
 </html>
