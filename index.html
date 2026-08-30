@@ -1,147 +1,111 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Babypeacock Neon</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #050505;
-            overflow: hidden;
-            touch-action: none;
-        }
+<title>BABYPEACOCK</title>
 
-        /* Arka Plan Izgarası */
-        .neon-grid {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            bottom: -50%;
-            left: -50%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 120, 0.25) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(0, 220, 255, 0.25) 2px, transparent 2px);
-            background-size: 50px 50px;
-            transform: perspective(500px) rotateX(65deg);
-            animation: moveGrid 3s linear infinite;
-            z-index: 1;
-        }
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
-        @keyframes moveGrid {
-            0% { transform: perspective(500px) rotateX(65deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(65deg) translateY(50px); }
-        }
+body{
+background:#000;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:Arial,Helvetica,sans-serif;
+}
 
-        /* Mavi-Yeşil Düz ve Net Neon Yazı */
-        .neon-title {
-            position: absolute;
-            top: 8%;
-            width: 100%;
-            text-align: center;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 7vw; /* Telefonda asla taşmaz */
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #ffffff;
-            text-shadow: 
-                0 0 5px #00ffcc,
-                0 0 10px #00ffcc,
-                0 0 20px #00aaff,
-                0 0 40px #00aaff;
-            z-index: 10;
-        }
+.background{
+position:absolute;
+width:100%;
+height:100%;
+overflow:hidden;
+}
 
-        /* Kuş Karakteri (Siyah Arka Planı Yok Eden Mod) */
-        #player {
-            position: absolute;
-            width: 110px;
-            height: 110px;
-            left: 50%;
-            top: 60%;
-            transform: translate(-50%, -50%);
-            background-image: url('drXH10s8.jpg'); 
-            background-size: cover;
-            background-position: center;
-            mix-blend-mode: screen; 
-            filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.9));
-            z-index: 20;
-            pointer-events: none;
-        }
+.line{
+position:absolute;
+height:3px;
+border-radius:5px;
+animation:move 5s linear infinite;
+}
 
-        #joystick-zone {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 30;
-        }
-    </style>
+.line:nth-child(odd){
+background:#00ff88;
+box-shadow:0 0 20px #00ff88;
+}
+
+.line:nth-child(even){
+background:#00bfff;
+box-shadow:0 0 20px #00bfff;
+}
+
+@keyframes move{
+0%{
+left:-40%;
+}
+100%{
+left:140%;
+}
+}
+
+.title{
+position:relative;
+font-size:90px;
+font-weight:900;
+letter-spacing:8px;
+text-transform:uppercase;
+background:linear-gradient(90deg,#00bfff,#00ff66);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+text-shadow:
+0 0 10px #00bfff,
+0 0 20px #00bfff,
+0 0 40px #00ff66,
+0 0 80px #00ff66;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="neon-title">BABYPEACOCK</div>
-    
-    <div class="neon-grid"></div>
-    
-    <div id="player"></div>
-    
-    <div id="joystick-zone"></div>
+<div class="background" id="bg"></div>
 
-    <script>
-        const player = document.getElementById('player');
-        const zone = document.getElementById('joystick-zone');
-        
-        let posX = window.innerWidth / 2;
-        let posY = window.innerHeight * 0.6;
-        let targetX = posX;
-        let targetY = posY;
-        let isMoving = false;
-        
-        const speed = 5; 
+<div class="title">
+BABYPEACOCK
+</div>
 
-        function setTarget(e) {
-            isMoving = true;
-            if(e.touches) {
-                targetX = e.touches[0].clientX;
-                targetY = e.touches[0].clientY;
-            } else {
-                targetX = e.clientX;
-                targetY = e.clientY;
-            }
-        }
+<script>
 
-        zone.addEventListener('mousedown', setTarget);
-        zone.addEventListener('mousemove', (e) => { if(isMoving) setTarget(e); });
-        zone.addEventListener('mouseup', () => isMoving = false);
+const bg=document.getElementById("bg");
 
-        zone.addEventListener('touchstart', setTarget);
-        zone.addEventListener('touchmove', setTarget);
-        zone.addEventListener('touchend', () => isMoving = false);
+for(let i=0;i<60;i++){
 
-        function gameLoop() {
-            if (isMoving) {
-                const dx = targetX - posX;
-                const dy = targetY - posY;
-                const dist = Math.hypot(dx, dy);
-                
-                if (dist > speed) {
-                    posX += (dx / dist) * speed;
-                    posY += (dy / dist) * speed;
-                }
-            }
-            
-            player.style.left = posX + 'px';
-            player.style.top = posY + 'px';
+let line=document.createElement("div");
 
-            requestAnimationFrame(gameLoop);
-        }
+line.className="line";
 
-        gameLoop();
-    </script>
+line.style.top=Math.random()*100+"%";
+
+line.style.width=(100+Math.random()*300)+"px";
+
+line.style.animationDuration=(2+Math.random()*5)+"s";
+
+line.style.animationDelay=(-Math.random()*5)+"s";
+
+bg.appendChild(line);
+
+}
+
+</script>
+
 </body>
 </html>
